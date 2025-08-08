@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/syafiqparadisam/paymentku/services/transactional/config"
 	controller_http "github.com/syafiqparadisam/paymentku/services/transactional/controller/http"
+	graphic_repo "github.com/syafiqparadisam/paymentku/services/transactional/repository/graphic"
 	topup_repo "github.com/syafiqparadisam/paymentku/services/transactional/repository/topup"
 	transfer_repo "github.com/syafiqparadisam/paymentku/services/transactional/repository/transfer"
 	"github.com/syafiqparadisam/paymentku/services/transactional/test/seeder"
@@ -40,7 +41,7 @@ func TestHistory(t *testing.T) {
 	if errSql != nil {
 		log.Fatal(errSql)
 	}
-	
+
 	userSeeder := seeder.NewUserSeeder(mysql)
 	topupSeeder := seeder.NewTopUpSeeder(mysql)
 	tfSeeder := seeder.NewTransferSeeder(mysql)
@@ -57,7 +58,8 @@ func TestHistory(t *testing.T) {
 	}
 	tfRepo := transfer_repo.NewTransferRepository(mysql, redClient)
 	topUpRepo := topup_repo.NewTopUpRepository(mysql, redClient)
-	usecase := usecase.NewTransactionalUsecase(tfRepo, topUpRepo)
+	graphicRepo := graphic_repo.NewGraphicRepository(mysql)
+	usecase := usecase.NewTransactionalUsecase(tfRepo, topUpRepo, graphicRepo)
 	cfg := config.NewHTTPConfig().WithPort(appPort)
 	server := controller_http.NewControllerHTTP(usecase, cfg)
 	history := NewHistoryTest(t, server, seeder, internalSecret)

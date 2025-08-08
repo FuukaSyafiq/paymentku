@@ -12,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/syafiqparadisam/paymentku/services/transactional/config"
 	controller_http "github.com/syafiqparadisam/paymentku/services/transactional/controller/http"
+	graphic_repo "github.com/syafiqparadisam/paymentku/services/transactional/repository/graphic"
 	topup_repo "github.com/syafiqparadisam/paymentku/services/transactional/repository/topup"
 	transfer_repo "github.com/syafiqparadisam/paymentku/services/transactional/repository/transfer"
 	"github.com/syafiqparadisam/paymentku/services/transactional/usecase"
@@ -103,7 +104,8 @@ func main() {
 
 	tfRepo := transfer_repo.NewTransferRepository(mysql, redClient)
 	topUpRepo := topup_repo.NewTopUpRepository(mysql, redClient)
-	usecase := usecase.NewTransactionalUsecase(tfRepo, topUpRepo)
+	graphicRepo := graphic_repo.NewGraphicRepository(mysql)
+	usecase := usecase.NewTransactionalUsecase(tfRepo, topUpRepo, graphicRepo)
 	cfg := config.NewHTTPConfig().WithPort(port)
 	controller := controller_http.NewControllerHTTP(usecase, cfg)
 

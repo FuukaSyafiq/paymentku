@@ -10,11 +10,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HistoryIcon from "@mui/icons-material/History";
 import { useNavigate } from "react-router-dom";
 import React, { ReactElement, ReactNode } from "react";
-import UserProfile from "./UserProfile";
-import { Help, Settings } from "@mui/icons-material";
+import { Help } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { route } from "../constant/route";
+import BarChartIcon from "@mui/icons-material/BarChart";
 
 type Props = {
   children: ReactNode | ReactElement;
@@ -26,15 +26,17 @@ const User: React.FC<Props> = ({ children }) => {
 
   return (
     <>
-      <Box display={"flex"} height={"100%"}>
+      <Box display={"flex"} position={"relative"} height={"100%"}>
         <Box
           display={"flex"}
+          paddingBottom={30}
           width={"20%"}
           bgcolor={darkMode.isDark ? "#222" : "white"}
           mr={3}
-          height={"180vh"}
           flexDirection={"column"}
           alignItems={"center"}
+          overflow={"scroll"}
+          sx={{ scrollbarWidth: "none" }}
         >
           <List sx={{ width: "100%" }}>
             <ListItem
@@ -79,21 +81,19 @@ const User: React.FC<Props> = ({ children }) => {
             </ListItem>
             <ListItem
               disablePadding
-              onClick={() => navigate(route["settings"])}
+              onClick={() => navigate(route["chartTransaction"])}
               sx={{ width: "100%" }}
             >
               <ListItemButton>
                 <ListItemIcon>
-                  <Settings
-                    style={{ color: darkMode.isDark ? "white" : "black" }}
-                  />
+                  <BarChartIcon />
                 </ListItemIcon>
                 <ListItemText
                   sx={{
                     fontWeight: "bold",
                     color: darkMode.isDark ? "white" : "black",
                   }}
-                  primary="Setting"
+                  primary="Grafik transaksi"
                 />
               </ListItemButton>
             </ListItem>
@@ -119,7 +119,17 @@ const User: React.FC<Props> = ({ children }) => {
             </ListItem>
           </List>
         </Box>
-        {children ? children : <UserProfile />}
+        <Box
+          display={"flex"}
+          width={"100%"}
+          position={"relative"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          mb={5}
+          flexDirection={"column"}
+        >
+          {children}
+        </Box>
       </Box>
     </>
   );

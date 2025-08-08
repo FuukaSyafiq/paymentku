@@ -77,3 +77,8 @@ export type HistoryTransfer = {
     status: "SUCCESS" | "FAILED",
     createdAt: string
 }
+
+export type IncomeData = {
+    date: string,
+    amount: number
+}

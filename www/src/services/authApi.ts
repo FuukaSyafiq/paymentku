@@ -19,7 +19,7 @@ export const authApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["user", "historytransfer", "historytopup"],
+  tagTypes: ["user", "historytransfer", "historytopup", "incomegraph", "outcomegraph"],
   endpoints: (builder) => ({
     signUp: builder.mutation<Response<null>, SignUpInput>({
       query: (user) => ({

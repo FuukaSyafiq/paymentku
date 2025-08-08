@@ -48,4 +48,7 @@ export class HistoryTransfer extends BaseEntity {
 
   @Column({ type: 'text' })
   created_at: string;
+
+  @Column({ type: 'text' })
+  deleted_at: string;
 }

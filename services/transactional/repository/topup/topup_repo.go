@@ -70,7 +70,7 @@ func (s *TopUpRepository) IncreaseBalanceById(tx *sql.Tx, ctx context.Context, a
 }
 
 func (s *TopUpRepository) CreateTopUpHistory(ctx context.Context, entity *domain.CreateHistoryTopUp) error {
-	result, err := s.mysql.Db.ExecContext(ctx, "INSERT INTO history_topup (amount, balance, previous_balance, status, userId, created_at) values (?, ?, ?, ?, ?, ?)", entity.Amount, entity.Balance, entity.PreviousBalance, entity.Status, entity.UserId, entity.CreatedAt)
+	result, err := s.mysql.Db.ExecContext(ctx, "INSERT INTO history_topup (amount, balance, previous_balance, status, userId, created_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)", entity.Amount, entity.Balance, entity.PreviousBalance, entity.Status, entity.UserId, entity.CreatedAt, entity.DeletedAt)
 	if err != nil {
 		return err
 	}

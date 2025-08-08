@@ -12,8 +12,8 @@ import (
 )
 
 type TransferRepository struct {
-	mysql *config.MySqlStore
-	redis *config.RedisStore
+	mysql         *config.MySqlStore
+	redis         *config.RedisStore
 	redisDuration time.Duration
 }
 
@@ -68,7 +68,7 @@ func (tp *TransferRepository) FindIsRead(ctx context.Context, id int) (*domain.I
 }
 
 func (tf *TransferRepository) GetAllHistoryTransfer(ctx context.Context, userid int) (*[]domain.GetHistoryTransfers, error) {
-	rowsHistory, err := tf.mysql.Db.QueryContext(ctx, "SELECT id, sender, receiver, amount, isRead, status, created_at FROM history_transfer WHERE userId = ? ORDER BY created_at DESC", userid)
+	rowsHistory, err := tf.mysql.Db.QueryContext(ctx, "SELECT id, sender, receiver, amount, isRead, status, created_at FROM history_transfer WHERE userId = ? AND deleted_at = '' ORDER BY created_at DESC FOR UPDATE", userid)
 	fmt.Println(rowsHistory)
 	if err != nil {
 		panic(err)
@@ -94,7 +94,7 @@ func (tf *TransferRepository) GetAllHistoryTransfer(ctx context.Context, userid 
 }
 
 func (tf *TransferRepository) GetHistoryTransferById(ctx context.Context, id int, userid int) (*domain.GetHistoryTransferById, error) {
-	rowsHistory, err := tf.mysql.Db.QueryContext(ctx, "SELECT id, sender, receiver, notes, amount, isRead, status, sender_name, receiver_name, created_at, previous_balance, balance FROM history_transfer WHERE id = ? AND userId = ?", id, userid)
+	rowsHistory, err := tf.mysql.Db.QueryContext(ctx, "SELECT id, sender, receiver, notes, amount, isRead, status, sender_name, receiver_name, created_at, previous_balance, balance FROM history_transfer WHERE id = ? AND userId = ? AND deleted_at = '' FOR UPDATE", id, userid)
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +123,9 @@ func (tf *TransferRepository) GetHistoryTransferById(ctx context.Context, id int
 }
 
 func (tf *TransferRepository) DeleteHistoryTransferById(tx *sql.Tx, ctx context.Context, id int, userid int) error {
-	result, err := tx.ExecContext(ctx, "DELETE FROM history_transfer WHERE id = ? AND userId = ?", id, userid)
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.999Z")
+
+	result, err := tx.ExecContext(ctx, "UPDATE history_transfer SET deleted_at = ? WHERE deleted_at = '' AND id = ? AND userId = ?", now, id, userid)
 	if err != nil {
 		panic(err)
 	}
@@ -135,7 +137,9 @@ func (tf *TransferRepository) DeleteHistoryTransferById(tx *sql.Tx, ctx context.
 }
 
 func (tf *TransferRepository) DeleteAllHistoryTransfer(tx *sql.Tx, ctx context.Context, userid int) error {
-	result, err := tx.ExecContext(ctx, "DELETE FROM history_transfer WHERE userId = ?", userid)
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.999Z")
+
+	result, err := tx.ExecContext(ctx, "UPDATE history_transfer SET deleted_at = ? WHERE deleted_at = '' AND userId = ?", now, userid)
 	if err != nil {
 		panic(err)
 	}

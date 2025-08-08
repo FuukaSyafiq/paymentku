@@ -9,10 +9,10 @@ export const route = {
   topup: "/dashboard/topup",
   signup: "/signup",
   help: "/dashboard/user/help",
-  settings: "/dashboard/user/settings",
   user: "/dashboard/user",
   maintenance: "/maintenance",
-  passwordReset: "/passwordReset*"
+  passwordReset: "/passwordReset*",
+  chartTransaction: "/dashboard/user/chart-transaction"
 };
 
 export const excludeRedirectRouteWhenUnauth = [

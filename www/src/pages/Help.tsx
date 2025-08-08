@@ -44,7 +44,7 @@ const Help = () => {
             </Dialog>
             <User>
                 <Box display={"flex"} width={"100%"} height={"100%"} justifyContent={"center"} flexDirection={"column"} alignItems={"center"} gap={2}>
-                    <Box display={"flex"} mt={2} gap={1} width={"100%"} alignItems={"center"} onClick={() => navigate(-1)}>
+                    <Box display={"flex"} gap={1} width={"100%"} alignItems={"center"} onClick={() => navigate(-1)}>
                         <ArrowBack style={{ marginLeft: "10px", cursor: "pointer" }} />
                     </Box>
                     <Box display="flex" justifyContent={"center"} alignItems={"center"} width="95%">
@@ -53,7 +53,7 @@ const Help = () => {
                         </Box>
 
                     </Box>
-                    <Box width={"95%"} display={"flex"} flexDirection={"column"} >
+                    <Box width={"100%"} display={"flex"} flexDirection={"column"} >
                         <Typography fontWeight={"bold"} fontSize={"20px"}>Leave comment</Typography>
                         <Typography>If you find bugs or bad features please contact us, and i will be update if your advice is well</Typography>
                         <form ref={form} onSubmit={submittedForm} style={{ display: "flex", flexDirection: "column", width: "50%" }}>

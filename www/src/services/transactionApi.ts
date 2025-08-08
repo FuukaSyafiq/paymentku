@@ -11,7 +11,7 @@ const transactionApi = authApi.injectEndpoints({
         url: "transaction/topup",
         body: arg,
       }),
-      invalidatesTags: ["historytopup", "user"],
+      invalidatesTags: ["historytopup", "user", "incomegraph"],
       transformErrorResponse(baseQueryReturnValue, meta) {
         if (
           (meta?.response?.status === 401 || meta?.response?.status === 403) &&
@@ -37,7 +37,7 @@ const transactionApi = authApi.injectEndpoints({
         method: "POST",
         body: arg,
       }),
-      invalidatesTags: ["historytransfer", "user"],
+      invalidatesTags: ["historytransfer", "user", "outcomegraph"],
       transformErrorResponse(baseQueryReturnValue, meta) {
         if (
           (meta?.response?.status === 401 || meta?.response?.status === 403) &&

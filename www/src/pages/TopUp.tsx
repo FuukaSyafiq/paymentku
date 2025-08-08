@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   InputLabel,
   TextField,
   Typography,
@@ -16,15 +15,9 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTopupMutation } from "../services/transactionApi";
-import {
-  ArrowBack,
-  BoltRounded,
-  CloseOutlined,
-  Done,
-} from "@mui/icons-material";
+import { ArrowBack } from "@mui/icons-material";
 // @ts-ignore
 import toRupiah from "@develoka/angka-rupiah-js";
-import FastTransferBox from "../component/FastTransferBox";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../app/store";
 
@@ -33,34 +26,26 @@ const TopUp = () => {
   const [err, setErr] = useState<any>("");
   const user = useSelector((state: RootState) => state.user);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
   const [topup, { data, isSuccess, error, isLoading }] = useTopupMutation();
   const [operational, setOperational] = useState<boolean>(true);
-  const [bonus, setBonus] = useState<number>(0);
   const [totalGettingMoney, setTotalGettingMoney] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  function calculatePrice(
-    amount: number,
-    checked: boolean,
-    operationalFee: boolean,
-    bonus: number
-  ): number {
+  function calculatePrice(amount: number, operationalFee: boolean): number {
     const operational = operationalFee ? 2 / 100 : 0;
-    const protection = checked ? 500 : 0;
-    return amount * operational + protection + amount + bonus;
+    return amount * operational + amount;
   }
-  function calculateGettingMoney(amount: number, bonus: number): number {
-    return amount + bonus;
+  function calculateGettingMoney(amount: number): number {
+    return amount;
   }
 
   useEffect(() => {
-    const total = calculatePrice(amount, isChecked, operational, bonus);
+    const total = calculatePrice(amount, operational);
     setTotalPrice(total);
-    setTotalGettingMoney(calculateGettingMoney(amount, bonus));
-  }, [amount, isChecked, bonus, operational]);
+    setTotalGettingMoney(calculateGettingMoney(amount));
+  }, [amount, operational]);
   useEffect(() => {
     if (isSuccess) {
       setOpenSnackbar(true);
@@ -98,8 +83,8 @@ const TopUp = () => {
             {toRupiah(totalGettingMoney, { dot: ",", floatingPoint: 0 })}
             <br></br>
             You will be charged{" "}
-            {toRupiah(totalPrice - bonus, { dot: ",", floatingPoint: 0 })}
-            Do you want to proceed ?
+            {toRupiah(totalPrice, { dot: ",", floatingPoint: 0 })} Do you want
+            to proceed ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -177,121 +162,74 @@ const TopUp = () => {
                     setErr("");
                     if (e.target.value === "") {
                       setAmount(0);
-                      setBonus(0);
                       return;
                     }
                     setAmount(num);
-                    if (num >= 100000000) {
-                      setBonus(200000);
-                      setOperational(false);
-                    } else if (num >= 10000000) {
-                      setBonus(50000);
-                      setOperational(false);
-                    } else if (num >= 1000000) {
-                      setBonus(10000);
-                      setOperational(false);
-                    } else if (num >= 500000) {
-                      setBonus(0);
-                      setOperational(false);
-                    } else {
-                      setBonus(0);
-                      setOperational(true);
-                    }
+                    setOperational(true);
                   }}
                 />
                 {err && <Typography color={"red"}>{err}</Typography>}
               </Box>
+            </Box>
+            <Box
+              display={"flex"}
+              width={"100%"}
+              marginY={"20px"}
+              gap={"20px"}
+              flexWrap={"wrap"}
+              alignItems={"center"}
+            >
               <Box
-                display={"flex"}
-                justifyContent={"center"}
-                flexDirection={"column"}
-                alignItems={"center"}
-                flexWrap={"wrap"}
+                borderRadius={"20px"}
+                paddingBlock={"5px"}
+                paddingInline={"10px"}
+                color={"black"}
+                bgcolor={"lightgray"}
+                onClick={() => {
+                  setAmount(50000);
+                  setOperational(true);
+                }}
               >
-                <Box display={"flex"} alignItems={"center"}>
-                  <Typography fontWeight={"bold"} fontSize={"20px"} py={3}>
-                    Fast topup
-                  </Typography>
-                  <BoltRounded color="warning" />
-                </Box>
-                <Box
-                  flexWrap={"wrap"}
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Box
-                    display={"flex"}
-                    gap={4}
-                    justifyContent={"center"}
-                    width={"100%"}
-                    flexWrap={"wrap"}
-                  >
-                    <FastTransferBox
-                      amount={500000}
-                      requirement={[
-                        { icon: <Done />, name: "Free operational price" },
-                        { icon: <CloseOutlined />, name: "No bonus" },
-                      ]}
-                      onClick={() => {
-                        setAmount(500000);
-                        setBonus(0);
-                        setOperational(false);
-                      }}
-                    />
-                    <FastTransferBox
-                      amount={1000000}
-                      requirement={[
-                        { icon: <Done />, name: "Free operational price" },
-                        {
-                          icon: <Done />,
-                          name:
-                            "Bonus " +
-                            toRupiah(10000, { dot: ",", floatingPoint: 0 }),
-                        },
-                      ]}
-                      onClick={() => {
-                        setAmount(1000000);
-                        setBonus(10000);
-                        setOperational(false);
-                      }}
-                    />
-                    <FastTransferBox
-                      amount={10000000}
-                      requirement={[
-                        { icon: <Done />, name: "Free operational price" },
-                        {
-                          icon: <Done />,
-                          name:
-                            "Bonus " +
-                            toRupiah(50000, { dot: ",", floatingPoint: 0 }),
-                        },
-                      ]}
-                      onClick={() => {
-                        setAmount(10000000);
-                        setBonus(50000);
-                        setOperational(false);
-                      }}
-                    />
-                    <FastTransferBox
-                      amount={100000000}
-                      requirement={[
-                        { icon: <Done />, name: "Free operational price" },
-                        {
-                          icon: <Done />,
-                          name:
-                            "Bonus " +
-                            toRupiah(200000, { dot: ",", floatingPoint: 0 }),
-                        },
-                      ]}
-                      onClick={() => {
-                        setAmount(100000000);
-                        setBonus(200000);
-                        setOperational(false);
-                      }}
-                    />
-                  </Box>
-                </Box>
+                {toRupiah(50000, { dot: ",", floatingPoint: 0 })}
+              </Box>
+              <Box
+                borderRadius={"20px"}
+                paddingBlock={"5px"}
+                paddingInline={"10px"}
+                color={"black"}
+                bgcolor={"lightgray"}
+                onClick={() => {
+                  setAmount(100000);
+                  setOperational(true);
+                }}
+              >
+                {toRupiah(100000, { dot: ",", floatingPoint: 0 })}
+              </Box>
+              <Box
+                borderRadius={"20px"}
+                paddingBlock={"5px"}
+                paddingInline={"10px"}
+                color={"black"}
+                bgcolor={"lightgray"}
+                onClick={() => {
+                  setAmount(500000);
+                  setOperational(true);
+                }}
+              >
+                {toRupiah(500000, { dot: ",", floatingPoint: 0 })}
+              </Box>
+              <Box
+                borderRadius={"20px"}
+                paddingBlock={"5px"}
+                paddingInline={"10px"}
+                color={"black"}
+                bgcolor={"lightgray"}
+                onClick={() => {
+                  setAmount(1000000);
+                  setOperational(true);
+                }}
+              >
+                {toRupiah(1000000, { dot: ",", floatingPoint: 0 })}
               </Box>
             </Box>
           </Box>
@@ -330,37 +268,6 @@ const TopUp = () => {
                     floatingPoint: 0,
                   })}
                 </Typography>
-                <Typography>
-                  Bonus : {toRupiah(bonus, { dot: ",", floatingPoint: 0 })}
-                </Typography>
-                <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-                  <Box
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                    width={"100%"}
-                  >
-                    <Typography>
-                      Protection costs :{" "}
-                      {toRupiah(500, { dot: ",", floatingPoint: 0 })}
-                    </Typography>
-                    <Checkbox
-                      checked={isChecked}
-                      onChange={(event) => {
-                        setIsChecked(event.target.checked);
-                      }}
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  </Box>
-                  <Typography
-                    ml={2}
-                    mt={"-10px"}
-                    fontSize={"12px"}
-                    color={"lightblue"}
-                  >
-                    Helps secure more transaction processes
-                  </Typography>
-                </Box>
               </Box>
               <Typography>
                 Total obtained :{" "}
@@ -368,7 +275,7 @@ const TopUp = () => {
               </Typography>
               <Typography mb={1}>
                 Total payment :{" "}
-                {toRupiah(totalPrice - bonus, { dot: ",", floatingPoint: 0 })}
+                {toRupiah(totalPrice, { dot: ",", floatingPoint: 0 })}
               </Typography>
               <Button
                 variant="contained"

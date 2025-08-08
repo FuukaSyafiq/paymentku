@@ -12,8 +12,8 @@ import (
 )
 
 type TopUpRepository struct {
-	mysql *config.MySqlStore
-	redis *config.RedisStore
+	mysql         *config.MySqlStore
+	redis         *config.RedisStore
 	redisDuration time.Duration
 }
 
@@ -53,6 +53,7 @@ func (tp *TopUpRepository) FindIsRead(ctx context.Context, id int) (*domain.IsRe
 }
 
 func (tp *TopUpRepository) UpdateIsRead(ctx context.Context, id int) error {
+
 	result, err := tp.mysql.Db.ExecContext(ctx, "UPDATE history_topup SET isRead = 1 WHERE id = ?", id)
 	if err != nil {
 		panic(err)
@@ -65,7 +66,7 @@ func (tp *TopUpRepository) UpdateIsRead(ctx context.Context, id int) error {
 }
 
 func (tp *TopUpRepository) GetAllHistoryTopUp(ctx context.Context, userid int) (*[]domain.GetHistoryTopUpForGetAll, error) {
-	rowsHistory, err := tp.mysql.Db.QueryContext(ctx, "SELECT history_topup.id, amount, isRead, status, history_topup.created_at FROM history_topup INNER JOIN users ON history_topup.userId = users.id WHERE history_topup.userId = ? ORDER BY history_topup.created_at DESC", userid)
+	rowsHistory, err := tp.mysql.Db.QueryContext(ctx, "SELECT history_topup.id, amount, isRead, status, history_topup.created_at FROM history_topup INNER JOIN users ON history_topup.userId = users.id WHERE history_topup.userId = ? AND history_topup.deleted_at = '' ORDER BY history_topup.created_at DESC ", userid)
 	fmt.Println(rowsHistory)
 
 	if err != nil {
@@ -85,7 +86,7 @@ func (tp *TopUpRepository) GetAllHistoryTopUp(ctx context.Context, userid int) (
 }
 
 func (tp *TopUpRepository) GetHistoryTopUpById(ctx context.Context, id int, userid int) (*domain.GetHistoryTopUpById, error) {
-	rowsHistory, err := tp.mysql.Db.QueryContext(ctx, "SELECT id, amount, balance, previous_balance, isRead, status, created_at FROM history_topup WHERE id = ? AND userId = ? FOR UPDATE", id, userid)
+	rowsHistory, err := tp.mysql.Db.QueryContext(ctx, "SELECT id, amount, balance, previous_balance, isRead, status, created_at FROM history_topup WHERE id = ? AND userId = ? AND deleted_at = '' FOR UPDATE", id, userid)
 
 	if err != nil {
 		panic(err)
@@ -102,7 +103,8 @@ func (tp *TopUpRepository) GetHistoryTopUpById(ctx context.Context, id int, user
 }
 
 func (tp *TopUpRepository) DeleteAllHistoryTopUp(tx *sql.Tx, ctx context.Context, userid int) error {
-	result, err := tx.ExecContext(ctx, "DELETE FROM history_topup WHERE userId = ?", userid)
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.999Z")
+	result, err := tx.ExecContext(ctx, "UPDATE history_topup SET deleted_at = ? WHERE deleted_at = '' AND userId = ?", now, userid)
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +116,9 @@ func (tp *TopUpRepository) DeleteAllHistoryTopUp(tx *sql.Tx, ctx context.Context
 }
 
 func (tp *TopUpRepository) DeleteHistoryTopUpById(tx *sql.Tx, ctx context.Context, id int, userid int) error {
-	result, err := tx.ExecContext(ctx, "DELETE FROM history_topup WHERE id = ? AND userId = ?", id, userid)
+	now := time.Now().UTC().Format("2006-01-02T15:04:05.999Z")
+
+	result, err := tx.ExecContext(ctx, "UPDATE history_topup SET deleted_at = ? WHERE deleted_at = '' AND id = ? AND userId = ?", now, id, userid)
 	if err != nil {
 		panic(err)
 	}

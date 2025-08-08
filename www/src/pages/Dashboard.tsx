@@ -1,7 +1,6 @@
 import { Box, Typography } from "@mui/material";
-import { AccountBalance, CurrencyExchange, Wifi } from "@mui/icons-material";
+import { AccountBalance, CurrencyExchange } from "@mui/icons-material";
 import CardItemDashboard from "../component/CardItemDashboard";
-import Category from "../component/Category";
 // @ts-ignore
 import toRupiah from "@develoka/angka-rupiah-js";
 import { route } from "../constant/route.ts";
@@ -9,7 +8,6 @@ import { route } from "../constant/route.ts";
 const Dashboard = () => {
   return (
     <>
-     
       <Box
         display={"flex"}
         width={"100%"}
@@ -60,77 +58,6 @@ const Dashboard = () => {
               },
             ]}
             content="center"
-          />
-        </Box>
-        <Box width={"100%"} ml={5} mt={5}>
-          <Box width={"10%"}>
-            <Category
-              menuItem={[
-                { redirect: route["dashboard"], categories: "All" },
-                { redirect: route["dashboard"], categories: "Games" },
-                { redirect: route["dashboard"], categories: "Quota" },
-              ]}
-              firstItem="All"
-            />
-          </Box>
-        </Box>
-
-        <Box display={"flex"} width={"100%"} flexDirection={"column"}>
-          <Box p={2}>
-            <Typography fontSize={"20px"} fontWeight={"bold"}>
-              Games
-            </Typography>
-          </Box>
-          <CardItemDashboard
-            card={[
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716341251/ml_og50uc.jpg",
-              },
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716340604/ff_b08hl6.jpg",
-              },
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716340656/pubg_l9dko2.png",
-              },
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716105033/hwseyeswegkwwloth7up.webp",
-              },
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716340610/growtopia_j5rviy.jpg",
-              },
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716340437/codm_pm6ibk.jpg",
-              },
-            ]}
-          />
-        </Box>
-        <Box display={"flex"} width={"100%"} flexDirection={"column"} mt={5}>
-          <Box p={2}>
-            <Typography fontSize={"20px"} fontWeight={"bold"}>
-              Pay your bill
-            </Typography>
-          </Box>
-          <CardItemDashboard
-            card={[
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716341057/pln_pl49n2.jpg",
-              },
-              {
-                bgImg:
-                  "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716341093/smartfren_fvelte.jpg",
-              },
-              {
-                title: "Wifi",
-                icon: <Wifi style={{ fontSize: "120px" }} />,
-              },
-            ]}
           />
         </Box>
       </Box>

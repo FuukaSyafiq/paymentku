@@ -96,7 +96,7 @@ func (s *TransferRepository) FindUserByAccNum(tx *sql.Tx, ctx context.Context, a
 }
 
 func (s *TransferRepository) InsertTransferHistory(ctx context.Context, transfer *domain.CreateHistoryTransfer) error {
-	result, err := s.mysql.Db.ExecContext(ctx, "INSERT INTO history_transfer (sender, sender_name, receiver, receiver_name, status, notes, amount, created_at,previous_balance, balance, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", transfer.Sender, transfer.SenderName, transfer.Receiver, transfer.ReceiverName, transfer.Status, transfer.Notes, transfer.Amount, transfer.CreatedAt, transfer.PreviousBalance, transfer.Balance, transfer.UserId)
+	result, err := s.mysql.Db.ExecContext(ctx, "INSERT INTO history_transfer (sender, sender_name, receiver, receiver_name, status, notes, amount, created_at,previous_balance, balance, userId, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", transfer.Sender, transfer.SenderName, transfer.Receiver, transfer.ReceiverName, transfer.Status, transfer.Notes, transfer.Amount, transfer.CreatedAt, transfer.PreviousBalance, transfer.Balance, transfer.UserId, transfer.DeletedAt)
 	if err != nil {
 		return err
 	}

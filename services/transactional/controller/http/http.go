@@ -81,11 +81,11 @@ func NewControllerHTTP(usecase usecase.UsecaseInterface, cfg *config.HTTPConfig)
 	return &ControllerHTTP{usecase: usecase, cfg: cfg}
 }
 func ExtractIDFromPath(r *http.Request, prefix string) (int, error) {
-    path := strings.TrimPrefix(r.URL.Path, prefix) // tambahkan slash!
+	path := strings.TrimPrefix(r.URL.Path, prefix) // tambahkan slash!
 
-    idStr := strings.Trim(path, "/")
+	idStr := strings.Trim(path, "/")
 
-    return strconv.Atoi(idStr)
+	return strconv.Atoi(idStr)
 }
 
 func (s *ControllerHTTP) Routes() http.Handler {
@@ -95,6 +95,8 @@ func (s *ControllerHTTP) Routes() http.Handler {
 	mux.Handle("/history/topup/{id}", MakeHTTPHandler(s.ExstractHeaderXUserData(s.HandleTopUpHistoryById), http.MethodGet, http.MethodDelete))
 	mux.Handle("/history/transfer/{id}", MakeHTTPHandler(s.ExstractHeaderXUserData(s.HandleTransferHistoryById), http.MethodGet, http.MethodDelete))
 
+	mux.Handle("/graph/income", MakeHTTPHandler(s.ExstractHeaderXUserData(s.HandleIncomeData), http.MethodGet))
+	mux.Handle("/graph/outcome", MakeHTTPHandler(s.ExstractHeaderXUserData(s.HandleOutcomeData), http.MethodGet))
 	mux.Handle("POST /transaction/topup", MakeHTTPHandler(s.ExstractHeaderXUserData(s.HandlerTopUp), http.MethodPost))
 	mux.Handle("POST /transaction/transfer", MakeHTTPHandler(s.ExstractHeaderXUserData(s.HandleTransfer), http.MethodPost))
 	fmt.Printf("Server listening on port%s\n", s.cfg.Port)

@@ -61,7 +61,6 @@ func (s *ControllerHTTP) GetAllTopUpHistory(w http.ResponseWriter, r *http.Reque
 	defer cancel()
 
 	result := s.usecase.GetAllHistoryTopUp(ctx, user)
-	fmt.Println(user.UserId)
 	return WriteJSON(w, result.StatusCode, result)
 }
 

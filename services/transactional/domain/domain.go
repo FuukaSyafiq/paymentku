@@ -4,7 +4,7 @@ import "time"
 
 type GetHistoryTopUpById struct {
 	Id              int    `json:"id"`
-	Amount          int   `json:"amount"`
+	Amount          int    `json:"amount"`
 	Balance         int64  `json:"balance"`
 	PreviousBalance int64  `json:"previousBalance"`
 	IsRead          bool   `json:"isRead"`
@@ -14,7 +14,7 @@ type GetHistoryTopUpById struct {
 
 type GetHistoryTopUpForGetAll struct {
 	Id        int    `json:"id"`
-	Amount    int   `json:"amount"`
+	Amount    int    `json:"amount"`
 	IsRead    bool   `json:"isRead"`
 	Status    string `json:"status"`
 	CreatedAt string `json:"createdAt"`
@@ -24,7 +24,7 @@ type GetHistoryTransfers struct {
 	Id        int    `json:"id"`
 	Sender    string `json:"sender"`
 	Receiver  string `json:"receiver"`
-	Amount    int   `json:"amount"`
+	Amount    int    `json:"amount"`
 	IsRead    bool   `json:"isRead"`
 	Status    string `json:"status"`
 	CreatedAt string `json:"createdAt"`
@@ -35,7 +35,7 @@ type GetHistoryTransferById struct {
 	Sender          string  `json:"sender"`
 	Receiver        string  `json:"receiver"`
 	Notes           *string `json:"notes"`
-	Amount          int    `json:"amount"`
+	Amount          int     `json:"amount"`
 	IsRead          bool    `json:"isRead"`
 	Status          string  `json:"status"`
 	SenderName      string  `json:"senderName"`
@@ -52,6 +52,7 @@ type CreateHistoryTopUp struct {
 	Status          string
 	PreviousBalance int64
 	CreatedAt       string
+	DeletedAt       string
 }
 
 type CreateHistoryTransfer struct {
@@ -66,6 +67,12 @@ type CreateHistoryTransfer struct {
 	Balance         int64
 	PreviousBalance int64
 	CreatedAt       string
+	DeletedAt       string
+}
+
+type GetIncomeData struct {
+	Amount uint   `json:"amount"`
+	Date   string `json:"date"`
 }
 
 func NewHistoryTransfer(userid int, sender string, senderName, receiver string, receiverName, status, notes string, amount uint, prevBalance, balance int64) *CreateHistoryTransfer {
@@ -81,6 +88,7 @@ func NewHistoryTransfer(userid int, sender string, senderName, receiver string, 
 		Notes:           notes,
 		Amount:          amount,
 		CreatedAt:       time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		DeletedAt:       "",
 	}
 }
 
@@ -92,5 +100,6 @@ func NewHistoryTopUp(amount int, balance int64, prevBalance int64, status string
 		Status:          status,
 		PreviousBalance: prevBalance,
 		CreatedAt:       time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		DeletedAt:       "",
 	}
 }

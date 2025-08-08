@@ -18,7 +18,7 @@ const Footer = () => {
 
     return (
         <>
-            <Box width={"100%"} bgcolor={"skyblue"} p={2}>
+            <Box width={"100%"} bgcolor={"skyblue"} p={2} position={"relative"} zIndex={999}>
                 <Box width={"100%"} display={"flex"} justifyContent={"space-around"} alignItems={"center"} py={5}>
 
                     <Box display={"flex"} justifyContent={"space-around"} width={"100%"}>
@@ -65,7 +65,6 @@ const Footer = () => {
                             <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["dashboard"])}>Dashboard</Typography>
                             <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["user"])}>Profile</Typography>
                             <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["topuphistory"])}>History</Typography>
-                            <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["settings"])}>Settings</Typography>
                         </Box>
                         <Box display={"flex"} flexDirection={"column"}>
                             <Typography fontWeight={"bold"} fontSize={"18px"}>Services</Typography>

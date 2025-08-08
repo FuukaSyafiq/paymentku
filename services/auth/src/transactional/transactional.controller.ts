@@ -4,11 +4,11 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
   Param,
   Post,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AccessTokenGuardGuard } from '../access-token-guard/access-token-guard.guard';
@@ -26,180 +26,147 @@ export class TransactionalController {
   private async forwardRequest(
     method: 'GET' | 'POST' | 'DELETE',
     path: string,
-    req,
+    req: any,
     data?: any,
-  ): Promise<AxiosResponse<any, any>> {
+  ): Promise<AxiosResponse<any>> {
     const headers = {
       'X-Request-Id': crypto.randomUUID(),
       'X-Internal-Secret': this.configService.get<string>('INTERNAL_SECRET'),
-      'X-Userid': req.user_id, // atau req.user_id, tergantung guard Anda
+      'X-Userid': req.user_id,
     };
 
     const url = this.configService.get<string>('TRANSACTIONAL_SVC') + path;
+    const options = { headers };
 
-    const options = {
-      headers,
-    };
-
-    let response;
-    switch (method) {
-      case 'GET':
-        response = await firstValueFrom(this.httpService.get(url, options));
-        break;
-      case 'POST':
-        response = await firstValueFrom(
-          this.httpService.post(url, data, options),
-        );
-        break;
-      case 'DELETE':
-        response = await firstValueFrom(this.httpService.delete(url, options));
-        break;
+    try {
+      switch (method) {
+        case 'GET':
+          return await firstValueFrom(this.httpService.get(url, options));
+        case 'POST':
+          return await firstValueFrom(
+            this.httpService.post(url, data, options),
+          );
+        case 'DELETE':
+          return await firstValueFrom(this.httpService.delete(url, options));
+        default:
+          throw new Error('Unsupported method');
+      }
+    } catch (error) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    return response;
   }
 
+  private async handleRequest(
+    method: 'GET' | 'POST' | 'DELETE',
+    basePath: string,
+    req: any,
+    id?: string,
+    body?: any,
+  ) {
+    const path = id ? `${basePath}/${id}` : basePath;
+    const result = await this.forwardRequest(method, path, req, body);
+    return result.data;
+  }
+
+  // === HISTORY TOPUP ===
+  @UseGuards(AccessTokenGuardGuard)
   @Get('history/topup')
-  @UseGuards(AccessTokenGuardGuard)
-  async getHistoryTopup(@Req() req: Request, @Res() res) {
-    try {
-      const path = `/history/topup`;
-      const result = await this.forwardRequest('GET', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  getHistoryTopup(@Req() req) {
+    return this.handleRequest('GET', '/history/topup', req);
   }
 
+  @UseGuards(AccessTokenGuardGuard)
   @Delete('history/topup')
-  @UseGuards(AccessTokenGuardGuard)
-  async deleteHistoryTopup(@Req() req: Request, @Res() res) {
-    try {
-      const path = `/history/topup`;
-      const result = await this.forwardRequest('DELETE', path, req);
-      result;
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-  @Delete('history/topup/:id')
-  @UseGuards(AccessTokenGuardGuard)
-  async deleteHistoryTopupById(
-    @Req() req: Request,
-    @Res() res,
-    @Param('id') id: string,
-  ) {
-    try {
-      const path = `/history/topup/${id}`;
-      const result = await this.forwardRequest('DELETE', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  deleteHistoryTopup(@Req() req) {
+    return this.handleRequest('DELETE', '/history/topup', req);
   }
 
+  @UseGuards(AccessTokenGuardGuard)
   @Get('history/topup/:id')
-  @UseGuards(AccessTokenGuardGuard)
-  async getHistoryTopupById(
-    @Req() req: Request,
-    @Res() res,
-    @Param('id') id: string,
-  ) {
-    try {
-      const path = `/history/topup/${id}`;
-      const result = await this.forwardRequest('GET', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  getHistoryTopupById(@Req() req, @Param('id') id: string) {
+    return this.handleRequest('GET', '/history/topup', req, id);
   }
 
+  @UseGuards(AccessTokenGuardGuard)
+  @Delete('history/topup/:id')
+  deleteHistoryTopupById(@Req() req, @Param('id') id: string) {
+    return this.handleRequest('DELETE', '/history/topup', req, id);
+  }
+
+  // === HISTORY TRANSFER ===
+  @UseGuards(AccessTokenGuardGuard)
   @Get('history/transfer')
-  @UseGuards(AccessTokenGuardGuard)
-  async getHistoryTransfer(@Req() req: Request, @Res() res) {
-    try {
-      const path = `/history/transfer`;
-      const result = await this.forwardRequest('GET', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  getHistoryTransfer(@Req() req) {
+    return this.handleRequest('GET', '/history/transfer', req);
   }
 
+  @UseGuards(AccessTokenGuardGuard)
   @Delete('history/transfer')
-  @UseGuards(AccessTokenGuardGuard)
-  async deleteHistoryTransfer(@Req() req: Request, @Res() res) {
-    try {
-      const path = `/history/transfer`;
-      const result = await this.forwardRequest('DELETE', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  deleteHistoryTransfer(@Req() req) {
+    return this.handleRequest('DELETE', '/history/transfer', req);
   }
 
-  @Delete('history/transfer/:id')
   @UseGuards(AccessTokenGuardGuard)
-  async deleteHistoryTransferById(
-    @Req() req: Request,
-    @Res() res,
-    @Param('id') id: string,
-  ) {
-    try {
-      const path = `/history/transfer/${id}`;
-      const result = await this.forwardRequest('DELETE', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   @Get('history/transfer/:id')
-  @UseGuards(AccessTokenGuardGuard)
-  async getHistoryTransferById(
-    @Req() req: Request,
-    @Res() res,
-    @Param('id') id: string,
-  ) {
-    try {
-      const path = `/history/transfer/${id}`;
-      const result = await this.forwardRequest('GET', path, req);
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  getHistoryTransferById(@Req() req, @Param('id') id: string) {
+    return this.handleRequest('GET', '/history/transfer', req, id);
   }
 
+  @UseGuards(AccessTokenGuardGuard)
+  @Delete('history/transfer/:id')
+  deleteHistoryTransferById(@Req() req, @Param('id') id: string) {
+    return this.handleRequest('DELETE', '/history/transfer', req, id);
+  }
+
+  // === TRANSACTIONS ===
+  @UseGuards(AccessTokenGuardGuard)
   @Post('transaction/topup')
-  @UseGuards(AccessTokenGuardGuard)
-  async topup(@Req() req: Request, @Body() body: any, @Res() res) {
-    try {
-      const result = await this.forwardRequest(
-        'POST',
-        '/transaction/topup',
-        req,
-        body,
-      );
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  topup(@Req() req, @Body() body: any) {
+    return this.handleRequest(
+      'POST',
+      '/transaction/topup',
+      req,
+      undefined,
+      body,
+    );
   }
 
-  @Post('transaction/transfer')
   @UseGuards(AccessTokenGuardGuard)
-  async transfer(@Req() req: Request, @Body() body: any, @Res() res) {
-    try {
-      const result = await this.forwardRequest(
-        'POST',
-        '/transaction/transfer',
-        req,
-        body,
-      );
-      return res.status(result.status).json(result.data);
-    } catch (error) {
-      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  @Post('transaction/transfer')
+  transfer(@Req() req, @Body() body: any) {
+    return this.handleRequest(
+      'POST',
+      '/transaction/transfer',
+      req,
+      undefined,
+      body,
+    );
+  }
+
+  // === GRAPH  ===
+  @UseGuards(AccessTokenGuardGuard)
+  @Get('/graph/income')
+  getIncome(@Req() req) {
+    return this.handleRequest(
+      'GET',
+      '/graph/income',
+      req,
+      undefined,
+      undefined,
+    );
+  }
+  @UseGuards(AccessTokenGuardGuard)
+  @Get('/graph/outcome')
+  getOutcome(@Req() req) {
+    return this.handleRequest(
+      'GET',
+      '/graph/outcome',
+      req,
+      undefined,
+      undefined,
+    );
   }
 }

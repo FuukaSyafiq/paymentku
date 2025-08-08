@@ -43,6 +43,7 @@ import {
   updateNameSchema,
   updatePhoneSchema,
 } from "../utils/validationSchema";
+import User from "./User";
 
 const UserProfile = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -71,7 +72,7 @@ const UserProfile = () => {
     phoneNumber: "",
     name: "",
   });
-  
+
   useEffect(() => {
     if (isSuccess && data?.data) {
       dispatch(setUser(data?.data));
@@ -157,266 +158,273 @@ const UserProfile = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Box
-        display={"flex"}
-        width={"100%"}
-        position={"relative"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        flexDirection={"column"}
-        ml={2}
-      >
+      <User>
         <Box
           display={"flex"}
-          position={"absolute"}
-          top={"20px"}
-          gap={1}
           width={"100%"}
-          alignItems={"center"}
-          onClick={() => navigate(-1)}
-        >
-          <ArrowBack style={{ marginLeft: "10px", cursor: "pointer" }} />
-        </Box>
-        <Box
-          width={"100%"}
-          display={"flex"}
-          justifyContent={"space-around"}
-          alignItems={"center"}
-        >
-          <Box onClick={() => setUI((prev) => ({ ...prev, uploadFile: true }))}>
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              badgeContent={
-                <EditIcon
-                  fontSize="large"
-                  sx={{
-                    borderRadius: "50%",
-                    background: "black",
-                    color: "white",
-                    padding: "5px",
-                  }}
-                />
-              }
-            >
-              <Avatar
-                alt="Travis Howard"
-                sx={{ width: "300px", height: "300px" }}
-                src={user?.photo_profile}
-              />
-            </Badge>
-          </Box>
-
-          <Box display={"flex"} flexDirection={"column"} width={"30%"}>
-            <InputLabel>Username: </InputLabel>
-            <Input
-              sx={{ marginBottom: "20px" }}
-              fullWidth
-              value={user?.user}
-              // onClick={handleUpdateUsername}
-            />
-            <InputLabel>Nickname: </InputLabel>
-            {err?.name && <Typography color={"red"}>{err.name}</Typography>}
-            <Input
-              value={val.name}
-              onChange={(e) => {
-                try {
-                  setValue((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }));
-                  setErr((prev) => ({ ...prev, name: "" }));
-                  updateNameSchema.validateSync({
-                    name: e.target.value,
-                  });
-                } catch (error: any) {
-                  if (error instanceof yup.ValidationError) {
-                    setErr((prev) => ({ ...prev, name: error.message }));
-                    return;
-                  }
-                }
-              }}
-              onBlur={async (e) => {
-                try {
-                  setErr((prev) => ({ ...prev, name: "" }));
-                  await updateNameSchema.validate({
-                    name: e.target.value,
-                  });
-                  await updateName({ name: e.target.value });
-                } catch (error: any) {
-                  if (error instanceof yup.ValidationError) {
-                    setErr((prev) => ({ ...prev, name: error.message }));
-                    return;
-                  }
-                }
-              }}
-            />
-          </Box>
-        </Box>
-        <Box
-          width={"100%"}
-          display={"flex"}
+          position={"relative"}
           justifyContent={"center"}
+          alignItems={"center"}
           flexDirection={"column"}
-          py={5}
         >
           <Box
             display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"flex-start"}
-            width={"30%"}
-            pt={3}
-          >
-            <Typography fontWeight={"bold"}>
-              Your balance is{" "}
-              {toRupiah(user?.balance, { dot: ",", floatingPoint: 0 })}
-            </Typography>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"flex-start"}
-            width={"50%"}
-            pt={3}
-          >
-            <label>Account number :</label>
-            <TextField
-              size="small"
-              disabled
-              value={user?.accountNumber}
-            ></TextField>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"flex-start"}
-            width={"50%"}
-            pt={3}
-          >
-            <label>Email :</label>
-            <TextField size="small" disabled value={user?.email}></TextField>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"flex-start"}
-            width={"50%"}
-            pt={3}
-          >
-            <label>Phone number :</label>
-            {err?.phoneNumber && (
-              <Typography color={"red"}>{err.phoneNumber}</Typography>
-            )}
-            <TextField
-              size="small"
-              value={val.phoneNumber}
-              placeholder={
-                user?.phone_number == null
-                  ? "You haven't yet set your phone number"
-                  : ""
-              }
-              onChange={(e) => {
-                try {
-                  setValue((prev) => ({
-                    ...prev,
-                    phoneNumber: e.target.value,
-                  }));
-                  setErr((prev) => ({ ...prev, phoneNumber: "" }));
-                  updatePhoneSchema.validateSync({
-                    phoneNumber: e.target.value,
-                  });
-                } catch (error: any) {
-                  if (error instanceof yup.ValidationError) {
-                    setErr((prev) => ({ ...prev, phoneNumber: error.message }));
-                    return;
-                  }
-                }
-              }}
-              onBlur={async (e) => {
-                try {
-                  setErr((prev) => ({ ...prev, phoneNumber: "" }));
-                  await updatePhoneSchema.validate({
-                    phoneNumber: e.target.value,
-                  });
-                  await updatePhone({ phoneNumber: e.target.value });
-                } catch (error: any) {
-                  if (error instanceof yup.ValidationError) {
-                    setErr((prev) => ({ ...prev, phoneNumber: error.message }));
-                    return;
-                  }
-                }
-              }}
-            ></TextField>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"flex-start"}
-            width={"50%"}
-            pt={3}
-          >
-            <label>Bio :</label>
-            {err?.bio && <Typography color={"red"}>{err.bio}</Typography>}
-            <TextareaAutosize
-              style={{ border: "1px solid black", fontFamily: "sans-serif" }}
-              onChange={(e) => {
-                try {
-                  setValue((prev) => ({ ...prev, bio: e.target.value }));
-                  setErr((prev) => ({ ...prev, bio: "" }));
-                  updateBioSchema.validateSync({
-                    bio: e.target.value,
-                  });
-                } catch (error: any) {
-                  if (error instanceof yup.ValidationError) {
-                    setErr((prev) => ({ ...prev, bio: error.message }));
-                    return;
-                  }
-                }
-              }}
-              onBlur={async (e) => {
-                try {
-                  setErr((prev) => ({ ...prev, bio: "" }));
-                  await updateBioSchema.validate({
-                    bio: e.target.value,
-                  });
-                  await updateBio({ bio: e.target.value });
-                } catch (error: any) {
-                  if (error instanceof yup.ValidationError) {
-                    setErr((prev) => ({ ...prev, bio: error.message }));
-                    return;
-                  }
-                }
-              }}
-              minRows={5}
-              value={val.bio}
-            ></TextareaAutosize>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"row"}
-            justifyContent={"flex-start"}
+            gap={1}
             width={"100%"}
-            pt={3}
+            alignItems={"center"}
+            mt={2}
+            onClick={() => navigate(-1)}
           >
-            <Typography fontWeight={"bold"}>
-              This account was created at{" "}
-              {timeStampToLocaleString(user?.created_at || new Date())}
-            </Typography>
+            <ArrowBack style={{ marginLeft: "10px", cursor: "pointer" }} />
           </Box>
-          <Box display={"flex"} flexDirection={"row"} mt={7} gap={2}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => {
-                setUI((prev) => ({ ...prev, alert: true }));
-              }}
+          <Box
+            width={"100%"}
+            display={"flex"}
+            justifyContent={"space-around"}
+            alignItems={"center"}
+          >
+            <Box
+              onClick={() => setUI((prev) => ({ ...prev, uploadFile: true }))}
             >
-              Logout
-            </Button>
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  <EditIcon
+                    fontSize="large"
+                    sx={{
+                      borderRadius: "50%",
+                      background: "black",
+                      color: "white",
+                      padding: "5px",
+                    }}
+                  />
+                }
+              >
+                <Avatar
+                  alt="Travis Howard"
+                  sx={{ width: "300px", height: "300px" }}
+                  src={user?.photo_profile}
+                />
+              </Badge>
+            </Box>
+
+            <Box display={"flex"} flexDirection={"column"} width={"30%"}>
+              <InputLabel>Username: </InputLabel>
+              <Input
+                sx={{ marginBottom: "20px" }}
+                fullWidth
+                value={user?.user}
+                // onClick={handleUpdateUsername}
+              />
+              <InputLabel>Nickname: </InputLabel>
+              {err?.name && <Typography color={"red"}>{err.name}</Typography>}
+              <Input
+                value={val.name}
+                onChange={(e) => {
+                  try {
+                    setValue((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }));
+                    setErr((prev) => ({ ...prev, name: "" }));
+                    updateNameSchema.validateSync({
+                      name: e.target.value,
+                    });
+                  } catch (error: any) {
+                    if (error instanceof yup.ValidationError) {
+                      setErr((prev) => ({ ...prev, name: error.message }));
+                      return;
+                    }
+                  }
+                }}
+                onBlur={async (e) => {
+                  try {
+                    setErr((prev) => ({ ...prev, name: "" }));
+                    await updateNameSchema.validate({
+                      name: e.target.value,
+                    });
+                    await updateName({ name: e.target.value });
+                  } catch (error: any) {
+                    if (error instanceof yup.ValidationError) {
+                      setErr((prev) => ({ ...prev, name: error.message }));
+                      return;
+                    }
+                  }
+                }}
+              />
+            </Box>
+          </Box>
+          <Box
+            width={"100%"}
+            display={"flex"}
+            justifyContent={"center"}
+            flexDirection={"column"}
+            py={5}
+          >
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-start"}
+              width={"30%"}
+              pt={3}
+            >
+              <Typography fontWeight={"bold"}>
+                Your balance is{" "}
+                {toRupiah(user?.balance, { dot: ",", floatingPoint: 0 })}
+              </Typography>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-start"}
+              width={"50%"}
+              pt={3}
+            >
+              <label>Account number :</label>
+              <TextField
+                size="small"
+                disabled
+                value={user?.accountNumber}
+              ></TextField>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-start"}
+              width={"50%"}
+              pt={3}
+            >
+              <label>Email :</label>
+              <TextField size="small" disabled value={user?.email}></TextField>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-start"}
+              width={"50%"}
+              pt={3}
+            >
+              <label>Phone number :</label>
+              {err?.phoneNumber && (
+                <Typography color={"red"}>{err.phoneNumber}</Typography>
+              )}
+              <TextField
+                size="small"
+                value={val.phoneNumber}
+                placeholder={
+                  user?.phone_number == null
+                    ? "You haven't yet set your phone number"
+                    : ""
+                }
+                onChange={(e) => {
+                  try {
+                    setValue((prev) => ({
+                      ...prev,
+                      phoneNumber: e.target.value,
+                    }));
+                    setErr((prev) => ({ ...prev, phoneNumber: "" }));
+                    updatePhoneSchema.validateSync({
+                      phoneNumber: e.target.value,
+                    });
+                  } catch (error: any) {
+                    if (error instanceof yup.ValidationError) {
+                      setErr((prev) => ({
+                        ...prev,
+                        phoneNumber: error.message,
+                      }));
+                      return;
+                    }
+                  }
+                }}
+                onBlur={async (e) => {
+                  try {
+                    setErr((prev) => ({ ...prev, phoneNumber: "" }));
+                    await updatePhoneSchema.validate({
+                      phoneNumber: e.target.value,
+                    });
+                    await updatePhone({ phoneNumber: e.target.value });
+                  } catch (error: any) {
+                    if (error instanceof yup.ValidationError) {
+                      setErr((prev) => ({
+                        ...prev,
+                        phoneNumber: error.message,
+                      }));
+                      return;
+                    }
+                  }
+                }}
+              ></TextField>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-start"}
+              width={"50%"}
+              pt={3}
+            >
+              <label>Bio :</label>
+              {err?.bio && <Typography color={"red"}>{err.bio}</Typography>}
+              <TextareaAutosize
+                style={{ border: "1px solid black", fontFamily: "sans-serif" }}
+                onChange={(e) => {
+                  try {
+                    setValue((prev) => ({ ...prev, bio: e.target.value }));
+                    setErr((prev) => ({ ...prev, bio: "" }));
+                    updateBioSchema.validateSync({
+                      bio: e.target.value,
+                    });
+                  } catch (error: any) {
+                    if (error instanceof yup.ValidationError) {
+                      setErr((prev) => ({ ...prev, bio: error.message }));
+                      return;
+                    }
+                  }
+                }}
+                onBlur={async (e) => {
+                  try {
+                    setErr((prev) => ({ ...prev, bio: "" }));
+                    await updateBioSchema.validate({
+                      bio: e.target.value,
+                    });
+                    await updateBio({ bio: e.target.value });
+                  } catch (error: any) {
+                    if (error instanceof yup.ValidationError) {
+                      setErr((prev) => ({ ...prev, bio: error.message }));
+                      return;
+                    }
+                  }
+                }}
+                minRows={5}
+                value={val.bio}
+              ></TextareaAutosize>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={"row"}
+              justifyContent={"flex-start"}
+              width={"100%"}
+              pt={3}
+            >
+              <Typography fontWeight={"bold"}>
+                This account was created at{" "}
+                {timeStampToLocaleString(user?.created_at)}
+              </Typography>
+            </Box>
+            <Box display={"flex"} flexDirection={"row"} mt={7} gap={2}>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  setUI((prev) => ({ ...prev, alert: true }));
+                }}
+              >
+                Logout
+              </Button>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </User>
     </>
   );
 };

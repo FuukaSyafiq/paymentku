@@ -29,10 +29,6 @@ const settings: Array<{ name: string; link: string }> = [
     link: route["user"],
   },
   {
-    name: "Settings",
-    link: route["settings"],
-  },
-  {
     name: "Help",
     link: route["help"],
   },
