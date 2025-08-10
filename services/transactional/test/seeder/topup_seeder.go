@@ -23,12 +23,12 @@ type TopUp struct {
 	UserId          int64
 	Status          string
 	CreatedAt       string
+	DeletedAt       string
 }
 
 func NewTopUpSeeder(mysql *config.MySqlStore) *TopUpSeeder {
 	return &TopUpSeeder{MySql: mysql}
 }
-
 
 func (topupSeeder *TopUpSeeder) Find(idUser int64) *[]TopUp {
 	rows, err := topupSeeder.MySql.Db.Query("SELECT id,amount,balance,previous_balance,isRead,userId,status,created_at FROM history_topup WHERE userId = ?", idUser)
@@ -85,7 +85,7 @@ func (topUpSeeder *TopUpSeeder) FindById(id int, userid int) (*domain.GetHistory
 }
 
 func (topUpSeeder *TopUpSeeder) Up(payload *mock.HistoryTopUp) int64 {
-	result, err := topUpSeeder.MySql.Db.Exec("INSERT INTO history_topup (userId, amount,balance,status,previous_balance,created_at) VALUES (?,?,?,?,?,?)", payload.UserId, payload.Amount, payload.Balance, payload.Status, payload.PreviousBalance, payload.CreatedAt)
+	result, err := topUpSeeder.MySql.Db.Exec("INSERT INTO history_topup (userId, amount,balance,status,previous_balance,created_at,deleted_at) VALUES (?,?,?,?,?,?, ?)", payload.UserId, payload.Amount, payload.Balance, payload.Status, payload.PreviousBalance, payload.CreatedAt, payload.DeletedAt)
 	if err != nil {
 		panic(err)
 	}
@@ -93,7 +93,6 @@ func (topUpSeeder *TopUpSeeder) Up(payload *mock.HistoryTopUp) int64 {
 	fmt.Println("Topup seeder has been up")
 	return idTopUp
 }
-
 
 func (topupSeeder *TopUpSeeder) DownFromUserId(userid int64) {
 	result, err := topupSeeder.MySql.Db.Exec("DELETE FROM history_topup WHERE userId = ?", userid)
@@ -106,7 +105,6 @@ func (topupSeeder *TopUpSeeder) DownFromUserId(userid int64) {
 	}
 	fmt.Println("Topup seeder has been down")
 }
-
 
 func (topupSeeder *TopUpSeeder) Down(id int64) {
 	result, err := topupSeeder.MySql.Db.Exec("DELETE FROM history_topup WHERE id = ?", id)

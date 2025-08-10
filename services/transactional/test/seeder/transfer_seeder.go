@@ -20,7 +20,6 @@ func NewTransferSeeder(mysql *config.MySqlStore) *TransferSeeder {
 	}
 }
 
-
 type HistoryTransferFull struct {
 	Id              int64
 	Sender          string
@@ -35,21 +34,10 @@ type HistoryTransferFull struct {
 	PreviousBalance int64
 	Balance         int64
 	UserId          int64
+	DeletedAt	string
 }
 
-type HistoryTransfer struct {
-	Id           int
-	Sender       string
-	Receiver     string
-	Notes        string
-	Amount       int
-	IsRead       int8
-	Status       string
-	SenderName   string
-	ReceiverName string
-	CreatedAt    string
-	UserId       int64
-}
+
 
 func (transferSeeder *TransferSeeder) Find(idUser int64) *[]HistoryTransferFull {
 	rows, err := transferSeeder.MySql.Db.Query("SELECT * FROM history_transfer WHERE userId = ?", idUser)
@@ -74,6 +62,7 @@ func (transferSeeder *TransferSeeder) Find(idUser int64) *[]HistoryTransferFull 
 			&history.IsRead,
 			&history.CreatedAt,
 			&history.UserId,
+			&history.DeletedAt,
 		); err != nil {
 			panic(err)
 		}
@@ -85,7 +74,7 @@ func (transferSeeder *TransferSeeder) Find(idUser int64) *[]HistoryTransferFull 
 
 func (transferSeeder *TransferSeeder) Up(payload *mock.HistoryTransfer) int64 {
 
-	result, err := transferSeeder.MySql.Db.Exec("INSERT INTO history_transfer (userId, sender, sender_name,receiver, receiver_name,status,notes,amount,created_at,previous_balance,balance) VALUES (?,?,?,?,?,?,?,?,?,?,?)", payload.UserId, payload.Sender, payload.SenderName, payload.Receiver, payload.ReceiverName, payload.Status, payload.Notes, payload.Amount, payload.CreatedAt, payload.PreviousBalance, payload.PreviousBalance-int64(payload.Amount))
+	result, err := transferSeeder.MySql.Db.Exec("INSERT INTO history_transfer (userId, sender, sender_name,receiver, receiver_name,status,notes,amount,created_at,previous_balance,balance,deleted_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", payload.UserId, payload.Sender, payload.SenderName, payload.Receiver, payload.ReceiverName, payload.Status, payload.Notes, payload.Amount, payload.CreatedAt, payload.PreviousBalance, payload.PreviousBalance-int64(payload.Amount), payload.DeletedAt)
 	if err != nil {
 		panic(err)
 	}
@@ -120,7 +109,7 @@ func (transferSeeder *TransferSeeder) FindAll(userid int) (*[]domain.GetHistoryT
 }
 
 func (transferSeeder *TransferSeeder) FindById(id int, userid int) (*domain.GetHistoryTransferById, error) {
-	rowsHistory, err := transferSeeder.MySql.Db.Query("SELECT id, sender, receiver, notes, amount, isRead, status, sender_name, receiver_name, previous_balance,balance, created_at FROM history_transfer WHERE id = ? AND userId = ?", id, userid)
+	rowsHistory, err := transferSeeder.MySql.Db.Query("SELECT id, sender, receiver, notes, amount, isRead, status, sender_name, receiver_name, previous_balance,balance, created_at  FROM history_transfer WHERE id = ? AND userId = ?", id, userid)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +137,6 @@ func (transferSeeder *TransferSeeder) FindById(id int, userid int) (*domain.GetH
 	return nil, sql.ErrNoRows
 }
 
-
 func (transferSeeder *TransferSeeder) DownFromUserid(idUser int64) {
 	result, err := transferSeeder.MySql.Db.Exec("DELETE FROM history_transfer WHERE userId = ?", idUser)
 	if err != nil {
@@ -160,7 +148,6 @@ func (transferSeeder *TransferSeeder) DownFromUserid(idUser int64) {
 	}
 	fmt.Println("Transfer Seeder has been down")
 }
-
 
 func (transferSeeder *TransferSeeder) Down(idTransfer int64) {
 	result, err := transferSeeder.MySql.Db.Exec("DELETE FROM history_transfer WHERE id = ?", idTransfer)

@@ -1,7 +1,6 @@
 package test
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -149,6 +148,7 @@ func (h *HistoryTest) DeleteHistoryTopUpById(t *testing.T) {
 	idTopup1 := h.Seeder.TopUpSeeder.Up(topUpMock1)
 	server := httptest.NewServer(controller_http.MakeHTTPHandler(h.Controller.ExstractHeaderXUserData(h.Controller.HandleTopUpHistoryById), http.MethodGet, http.MethodDelete))
 	defer func() {
+		h.TopUpSeeder.Down(idTopup1)
 		h.UserSeeder.Down(idUser, idProfile)
 		server.Close()
 	}()
@@ -163,9 +163,9 @@ func (h *HistoryTest) DeleteHistoryTopUpById(t *testing.T) {
 	actualResp := &dto.APIResponse[interface{}]{}
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	json.Unmarshal(bodyBytes, actualResp)
-	_, err := h.Seeder.TopUpSeeder.FindById(int(idTopup1), int(idUser))
+	historyById, _ := h.Seeder.TopUpSeeder.FindById(int(idTopup1), int(idUser))
 
-	assert.Equal(t, err, sql.ErrNoRows)
+	assert.NotNil(t, historyById)
 	assert.Equal(t, http.StatusOK, actualResp.StatusCode)
 	assert.Equal(t, "Successfully deleted", actualResp.Message)
 }
@@ -194,7 +194,7 @@ func (h *HistoryTest) DeleteHistoryTopUpByWrongId(t *testing.T) {
 	json.Unmarshal(bodyBytes, actualResp)
 
 	assert.Equal(t, http.StatusOK, actualResp.StatusCode)
-	assert.Equal(t, errors.ErrNothingToDel.Error(), actualResp.Message)
+	assert.Equal(t, errors.ErrAffectedRows.Error(), actualResp.Message)
 }
 
 func (h *HistoryTest) DeleteAllHistoryTopUp(t *testing.T) {
@@ -207,6 +207,8 @@ func (h *HistoryTest) DeleteAllHistoryTopUp(t *testing.T) {
 	idTopup2 := h.Seeder.TopUpSeeder.Up(topUpMock2)
 	server := httptest.NewServer(controller_http.MakeHTTPHandler(h.Controller.ExstractHeaderXUserData(h.Controller.HandleAllTopUpHistory), http.MethodGet, http.MethodDelete))
 	defer func() {
+		h.TopUpSeeder.Down(idTopup1)
+		h.TopUpSeeder.Down(idTopup2)
 		h.UserSeeder.Down(idUser, idProfile)
 		server.Close()
 	}()
@@ -221,11 +223,11 @@ func (h *HistoryTest) DeleteAllHistoryTopUp(t *testing.T) {
 	actualResp := &dto.APIResponse[interface{}]{}
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	json.Unmarshal(bodyBytes, actualResp)
-	_, errFind1 := h.Seeder.TopUpSeeder.FindById(int(idTopup1), int(idUser))
-	_, errFind2 := h.Seeder.TopUpSeeder.FindById(int(idTopup2), int(idUser))
+	topUp1, _ := h.Seeder.TopUpSeeder.FindById(int(idTopup1), int(idUser))
+	toUp2, _ := h.Seeder.TopUpSeeder.FindById(int(idTopup2), int(idUser))
 
-	assert.Equal(t, errFind1, sql.ErrNoRows)
-	assert.Equal(t, errFind2, sql.ErrNoRows)
+	assert.NotNil(t, topUp1)
+	assert.NotNil(t, toUp2)
 	assert.Equal(t, http.StatusOK, actualResp.StatusCode)
 	assert.Equal(t, "Successfully deleted", actualResp.Message)
 }
@@ -252,5 +254,5 @@ func (h *HistoryTest) DeleteAllHistoryTopUpWithEmptyData(t *testing.T) {
 	json.Unmarshal(bodyBytes, actualResp)
 
 	assert.Equal(t, http.StatusOK, actualResp.StatusCode)
-	assert.Equal(t, errors.ErrNothingToDel.Error(), actualResp.Message)
+	assert.Equal(t, errors.ErrAffectedRows.Error(), actualResp.Message)
 }

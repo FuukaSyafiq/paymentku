@@ -1,7 +1,6 @@
 package test
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -195,6 +194,7 @@ func (h *HistoryTest) DeleteHistoryTransferById(t *testing.T) {
 	// setup server
 	server := httptest.NewServer(controller_http.MakeHTTPHandler(h.Controller.ExstractHeaderXUserData(h.Controller.HandleTransferHistoryById), http.MethodGet, http.MethodDelete))
 	defer func() {
+		h.Seeder.TransferSeeder.Down(idTransfer1)
 		h.Seeder.UserSeeder.Down(senderIdUser, senderIdProfile)
 		h.Seeder.UserSeeder.Down(receiverIdUser, receiverIdProfile)
 		server.Close()
@@ -209,8 +209,9 @@ func (h *HistoryTest) DeleteHistoryTransferById(t *testing.T) {
 	client := &http.Client{}
 	resp, _ := client.Do(req)
 
-	_, errFind := h.Seeder.TransferSeeder.FindById(int(idTransfer1), int(senderIdUser))
-	assert.Equal(t, errFind, sql.ErrNoRows)
+	transfer1, _ := h.Seeder.TransferSeeder.FindById(int(idTransfer1), int(senderIdUser))
+
+	assert.NotNil(t, transfer1)
 
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	actualResp := &dto.APIResponse[*domain.GetHistoryTransferById]{}
@@ -259,7 +260,7 @@ func (h *HistoryTest) DeleteHistoryTransferByWrongId(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, http.StatusOK, actualResp.StatusCode)
-	assert.Equal(t, errors.ErrNothingToDel.Error(), actualResp.Message)
+	assert.Equal(t, errors.ErrAffectedRows.Error(), actualResp.Message)
 }
 
 func (h *HistoryTest) DeleteAllHistoryTransfer(t *testing.T) {
@@ -281,6 +282,8 @@ func (h *HistoryTest) DeleteAllHistoryTransfer(t *testing.T) {
 	// setup server
 	server := httptest.NewServer(controller_http.MakeHTTPHandler(h.Controller.ExstractHeaderXUserData(h.Controller.HandleAllTransferHistory), http.MethodGet, http.MethodDelete))
 	defer func() {
+		h.Seeder.TransferSeeder.Down(idTransfer1)
+		h.Seeder.TransferSeeder.Down(idTransfer2)
 		h.Seeder.UserSeeder.Down(senderIdUser, senderIdProfile)
 		h.Seeder.UserSeeder.Down(receiverIdUser, receiverIdProfile)
 		server.Close()
@@ -295,11 +298,11 @@ func (h *HistoryTest) DeleteAllHistoryTransfer(t *testing.T) {
 	client := &http.Client{}
 	resp, _ := client.Do(req)
 
-	_, errFind1 := h.Seeder.TransferSeeder.FindById(int(idTransfer1), int(senderIdUser))
-	assert.Equal(t, errFind1, sql.ErrNoRows)
+	transfer1, _ := h.Seeder.TransferSeeder.FindById(int(idTransfer1), int(senderIdUser))
+	assert.NotNil(t, transfer1)
 
-	_, errFind2 := h.Seeder.TransferSeeder.FindById(int(idTransfer2), int(senderIdUser))
-	assert.Equal(t, errFind2, sql.ErrNoRows)
+	transfer2, _ := h.Seeder.TransferSeeder.FindById(int(idTransfer2), int(senderIdUser))
+	assert.NotNil(t, transfer2)
 
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	actualResp := &dto.APIResponse[*domain.GetHistoryTransferById]{}

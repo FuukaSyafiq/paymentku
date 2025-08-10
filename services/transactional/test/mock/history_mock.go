@@ -9,6 +9,7 @@ type HistoryTopUp struct {
 	Status          string
 	PreviousBalance int64
 	CreatedAt       string
+	DeletedAt       string
 }
 
 type HistoryTransfer struct {
@@ -22,6 +23,7 @@ type HistoryTransfer struct {
 	Notes           string
 	Amount          uint
 	CreatedAt       string
+	DeletedAt       string
 }
 
 func NewHistoryTransfer1(userid int64, user1 *Profile, user2 *Profile) *HistoryTransfer {
@@ -36,21 +38,23 @@ func NewHistoryTransfer1(userid int64, user1 *Profile, user2 *Profile) *HistoryT
 		Notes:           "",
 		Amount:          10000,
 		CreatedAt:       time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		DeletedAt:       "",
 	}
 }
 
 func NewHistoryTransfer2(userid int64, user1 *Profile, user2 *Profile) *HistoryTransfer {
 	return &HistoryTransfer{
-		UserId:       userid,
-		Sender:       user1.User,
-		SenderName:   user1.Name,
-		Receiver:     user2.User,
+		UserId:          userid,
+		Sender:          user1.User,
+		SenderName:      user1.Name,
+		Receiver:        user2.User,
 		PreviousBalance: user1.Balance,
-		ReceiverName: user2.Name,
-		Status:       "FAILED",
-		Notes:        "",
-		Amount:       1000,
-		CreatedAt:    time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		ReceiverName:    user2.Name,
+		Status:          "FAILED",
+		Notes:           "",
+		Amount:          1000,
+		CreatedAt:       time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		DeletedAt:       "",
 	}
 }
 
@@ -62,6 +66,7 @@ func NewHistoryTopUp1(user *Profile, userid int64) *HistoryTopUp {
 		Status:          "SUCCESS",
 		PreviousBalance: user.Balance,
 		CreatedAt:       time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		DeletedAt:       "",
 	}
 }
 
@@ -73,5 +78,6 @@ func NewHistoryTopUp2(user *Profile, userid int64) *HistoryTopUp {
 		Status:          "FAILED",
 		PreviousBalance: user.Balance,
 		CreatedAt:       time.Now().UTC().Format("2006-01-02T15:04:05.999Z"),
+		DeletedAt:       "",
 	}
 }

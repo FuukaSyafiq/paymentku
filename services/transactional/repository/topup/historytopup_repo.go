@@ -110,7 +110,8 @@ func (tp *TopUpRepository) DeleteAllHistoryTopUp(tx *sql.Tx, ctx context.Context
 	}
 	affRows, _ := result.RowsAffected()
 	if affRows == 0 {
-		return errors.ErrNothingToDel
+		return errors.ErrAffectedRows
+
 	}
 	return nil
 }
@@ -124,7 +125,8 @@ func (tp *TopUpRepository) DeleteHistoryTopUpById(tx *sql.Tx, ctx context.Contex
 	}
 	affRows, _ := result.RowsAffected()
 	if affRows == 0 {
-		return errors.ErrNothingToDel
+		return errors.ErrAffectedRows
+
 	}
 	return nil
 }

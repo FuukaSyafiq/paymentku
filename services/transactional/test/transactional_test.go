@@ -77,6 +77,7 @@ func (tf *HistoryTest) CreateTopUpTransaction(t *testing.T) {
 		assert.Equal(t, h.Balance, usermock.Balance+int64(body.Amount))
 		assert.Equal(t, h.IsRead, int8(0))
 		assert.Equal(t, h.UserId, idUser)
+		assert.Equal(t, h.DeletedAt, "")
 		assert.NotEmpty(t, h.CreatedAt)
 	}
 
@@ -220,6 +221,8 @@ func (tf *HistoryTest) CreateTransferTransaction(t *testing.T) {
 		assert.Equal(t, h.ReceiverName, receivermock.Name)
 		assert.NotEmpty(t, h.CreatedAt)
 		assert.Equal(t, h.UserId, idSenderUser)
+		assert.Equal(t, h.DeletedAt, "")
+
 	}
 
 }

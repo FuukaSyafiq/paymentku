@@ -22,8 +22,8 @@ func (u *Usecase) DeleteHistoryTransferById(ctx context.Context, user *dto.XUser
 	}
 	// delete history
 	errDelete := u.tfRepo.DeleteHistoryTransferById(tx, ctx, id, userid)
-	if errDelete == errors.ErrNothingToDel {
-		response := dto.APIResponse[interface{}]{StatusCode: 200, Message: errors.ErrNothingToDel.Error()}
+	if errDelete == errors.ErrAffectedRows {
+		response := dto.APIResponse[interface{}]{StatusCode: 200, Message: errors.ErrAffectedRows.Error()}
 		log.Info().Int("Status Code", response.StatusCode).Str("Message", response.Message).Msg("Response logs")
 		return response
 	}
@@ -50,8 +50,8 @@ func (u *Usecase) DeleteAllHistoryTransfer(ctx context.Context, user *dto.XUserD
 
 	// delete history
 	errDeleteHistory := u.tfRepo.DeleteAllHistoryTransfer(tx, ctx, userid)
-	if errDeleteHistory == errors.ErrNothingToDel {
-		response := dto.APIResponse[interface{}]{StatusCode: http.StatusOK, Message: errors.ErrNothingToDel.Error()}
+	if errDeleteHistory == errors.ErrAffectedRows {
+		response := dto.APIResponse[interface{}]{StatusCode: 200, Message: errors.ErrAffectedRows.Error()}
 		log.Info().Int("Status Code", response.StatusCode).Str("Message", response.Message).Msg("Response logs")
 		return response
 	}

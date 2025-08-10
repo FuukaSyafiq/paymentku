@@ -131,7 +131,7 @@ func (tf *TransferRepository) DeleteHistoryTransferById(tx *sql.Tx, ctx context.
 	}
 	affRows, _ := result.RowsAffected()
 	if affRows == 0 {
-		return errors.ErrNothingToDel
+		return errors.ErrAffectedRows
 	}
 	return nil
 }
@@ -145,7 +145,7 @@ func (tf *TransferRepository) DeleteAllHistoryTransfer(tx *sql.Tx, ctx context.C
 	}
 	affRows, _ := result.RowsAffected()
 	if affRows == 0 {
-		return errors.ErrNothingToDel
+		return errors.ErrAffectedRows
 	}
 	return nil
 }
