@@ -9,7 +9,6 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { WinstonModule } from 'nest-winston';
 import { transports } from 'winston';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { mysqlOptionRunner } from './ormconfig';
 import { ProfileModule } from './profile/profile.module';
 import { DataSource } from 'typeorm';
 import { mysqlOptionRunner } from './ormconfig';

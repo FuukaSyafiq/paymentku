@@ -1,6 +1,6 @@
 services:
   mysqldb:
-    image: mysql:9.1
+    image: mysql:9.6
     container_name: mysqldb
     restart: on-failure
     ports:

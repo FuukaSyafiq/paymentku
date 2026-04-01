@@ -1,6 +1,6 @@
 services:
   mysqldb:
-    image: mysql:9.1
+    image: mysql:9.6
     container_name: mysqldb
     restart: on-failure
     ports:
@@ -26,7 +26,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - mysqldb:/var/lib/mysql
+      - mysqlpaymentku:/var/lib/mysql
       - ../../database/table.sql:/docker-entrypoint-initdb.d/initsql
 
   # otel-collector:
@@ -64,7 +64,7 @@ services:
   #     - "127.0.0.1:32782:4250"
 
   redis:
-    image: redis:7.4.1
+    image: redis:8.6-alpine
     container_name: redis
     restart: on-failure
     ports:
@@ -74,5 +74,5 @@ services:
       - ../../database/redis/redis.conf:/usr/local/etc/redis/redis.conf
 
 volumes:
-   mysqldb:
+   mysqlpaymentku:
    redis_data:
