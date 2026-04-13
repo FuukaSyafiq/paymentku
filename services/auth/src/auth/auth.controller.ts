@@ -21,6 +21,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import {
   EmailDto,
   NewPWDTO,
@@ -40,6 +41,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 export class AuthController {
   constructor(
     private authService: AuthService,
+    private usersService: UsersService,
     private configService: ConfigService,
   ) {}
 
@@ -222,6 +224,29 @@ export class AuthController {
       const result = await this.authService.verifyAndUpdateUsername(
         body,
         userData,
+      );
+      return res.status(result.statusCode).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('help/send')
+  @UseGuards(AccessTokenGuardGuard)
+  async sendHelpMessage(
+    @Body() body: { message: string },
+    @Request() req,
+    @Res() res,
+  ): Promise<void> {
+    try {
+      const userData: jwtPayload = {
+        user_id: req.user_id,
+      };
+      const user = await this.usersService.findUserById(userData.user_id);
+      const result = await this.authService.sendHelpEmail(
+        body.message,
+        user?.email,
       );
       return res.status(result.statusCode).json(result);
     } catch (error) {

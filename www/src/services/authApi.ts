@@ -155,6 +155,15 @@ export const authApi = createApi({
         return baseQueryReturnValue;
       },
     }),
+    sendHelpMessage: builder.mutation<Response<null>, { message: string }>({
+      query: (data) => ({
+        method: "POST",
+        url: "help/send",
+        body: {
+          message: data.message,
+        },
+      }),
+    }),
   }),
 });
 
@@ -165,4 +174,5 @@ export const {
   useSendEmailForgotPasswordMutation,
   useLogoutMutation,
   useDeleteAccountMutation,
+  useSendHelpMessageMutation,
 } = authApi;

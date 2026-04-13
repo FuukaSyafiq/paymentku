@@ -6,303 +6,414 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
+  Card,
+  Grid,
+  Container,
 } from "@mui/material";
-import { CardCover, Card } from "@mui/joy";
-import { Circle } from "@mui/icons-material";
+import {
+  AccountBalance,
+  Money,
+  History,
+  Security,
+  Speed,
+  Support,
+  CreditCard,
+  SwapHoriz,
+  TrendingUp,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { route } from "../constant/route";
-import { useGetUserQuery } from "../services/profileApi";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { setUser } from "../features/user/userSlice";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { data, isSuccess } = useGetUserQuery();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (isSuccess && data?.data) {
-      dispatch(setUser(data?.data));
-    }
-  }, [isSuccess]);
 
   return (
-    <Box
-      display={"flex"}
-      width={"100%"}
-      flexDirection={"column"}
-      alignItems={"center"}
-    >
+    <Box width={"100%"}>
       <Box
-        height={"100vh"}
-        width={"100%"}
-        justifyContent={"space-around"}
-        display={"flex"}
-        alignItems={"center"}
-        bgcolor={"#f5ffaa"}
+        sx={{
+          background:
+            "linear-gradient(135deg, #1a237e 0%, #283593 50%, #303f9f 100%)",
+          minHeight: "90vh",
+          display: "flex",
+          alignItems: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
         <Box
-          width={"40%"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          flexDirection={"column"}
-        >
-          <Typography fontWeight={"bold"} fontSize={"30px"}>
-            Welcome to paymentku - Your Best Solution for Digital Transactions!
-          </Typography>
-          <Typography fontSize={"14px"}>
-            Enjoy the convenience of handling all your financial transactions in
-            one place. At paymentku, we offer quick, secure, and reliable
-            services for money top-ups, game top-ups, and bill payments.
-          </Typography>
-        </Box>
+          sx={{
+            position: "absolute",
+            top: "-50%",
+            right: "-20%",
+            width: "600px",
+            height: "600px",
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.05)",
+          }}
+        />
         <Box
-          width={"40%"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <img
-            src={
-              "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716381412/transaction-illustration1_wswxgb.png"
-            }
-            width={500}
-          />
-        </Box>
+          sx={{
+            position: "absolute",
+            bottom: "-30%",
+            left: "-10%",
+            width: "400px",
+            height: "400px",
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.03)",
+          }}
+        />
+        <Container maxWidth="lg">
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography
+                variant="h2"
+                sx={{
+                  color: "white",
+                  fontWeight: 800,
+                  mb: 2,
+                  fontSize: { xs: "2rem", md: "3rem" },
+                  lineHeight: 1.2,
+                }}
+              >
+                Paymentku
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  color: "rgba(255,255,255,0.9)",
+                  fontWeight: 500,
+                  mb: 3,
+                }}
+              >
+                Your Trusted Digital Banking Partner
+              </Typography>
+              <Typography
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  mb: 4,
+                  fontSize: "1.1rem",
+                  lineHeight: 1.8,
+                }}
+              >
+                Experience seamless digital banking with secure fund transfers,
+                instant top-ups, and comprehensive transaction management. All
+                your banking needs in one place.
+              </Typography>
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#ffd54f",
+                    color: "#1a237e",
+                    fontWeight: "bold",
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    "&:hover": { bgcolor: "#ffca28" },
+                  }}
+                  onClick={() => navigate(route["signup"])}
+                >
+                  Get Started
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    borderColor: "rgba(255,255,255,0.5)",
+                    color: "white",
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    "&:hover": {
+                      borderColor: "white",
+                      bgcolor: "rgba(255,255,255,0.1)",
+                    },
+                  }}
+                  onClick={() => navigate(route["signin"])}
+                >
+                  Sign In
+                </Button>
+              </Box>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ display: { xs: "none", md: "block" } }}
+            >
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.1)",
+                  borderRadius: 4,
+                  p: 4,
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                <Card
+                  sx={{
+                    p: 3,
+                    bgcolor: "rgba(255,255,255,0.95)",
+                    borderRadius: 3,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                    <AccountBalance
+                      sx={{ fontSize: 40, color: "#1a237e", mr: 2 }}
+                    />
+                    <Box>
+                      <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="#1a237e"
+                      >
+                        Paymentku
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Digital Banking
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    color="#1a237e"
+                    mb={1}
+                  >
+                    **** **** **** 4829
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 2,
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Account Holder
+                      </Typography>
+                      <Typography fontWeight="bold">Your Name</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Balance
+                      </Typography>
+                      <Typography fontWeight="bold" color="success.main">
+                        Rp 10,000,000
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Card>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
       </Box>
-      <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        width={"80%"}
-        alignItems={"center"}
-        p={5}
-        height={"100vh"}
-      >
-        <Box
-          width={"30%"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <img
-            src="https://res.cloudinary.com/dktwq4f3f/image/upload/v1716382048/easypayment_ndllea.png"
-            width={400}
-          />
-        </Box>
-        <Box width={"50%"}>
-          <Typography fontWeight={"bold"} fontSize={"25px"}>
-            Our Key Features:
-          </Typography>
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Money Top-Ups:</span>{" "}
-                Easily and instantly top up your digital account balance.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Game Top-Ups:</span> Get
-                your favorite game credits anytime, anywhere.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Bill Payments:</span> Pay
-                your electricity, water, internet, and other bills with just a
-                few clicks.
-              </ListItemText>
-            </ListItem>
-          </List>
-        </Box>
-      </Box>
-      <Box
-        display={"flex"}
-        id="aboutUs"
-        justifyContent={"space-around"}
-        width={"100%"}
-        mx={10}
-        alignItems={"center"}
-        p={5}
-        height={"100vh"}
-        bgcolor={"#f5ffaa"}
-      >
-        <Box width={"50%"}>
-          <Typography fontWeight={"bold"} fontSize={"25px"}>
-            Why Choose Us?
-          </Typography>
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Guaranteed Security:</span>
-                Our system is equipped with the latest security technology to
-                protect all your transactions.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Fast and Easy: </span>{" "}
-                Quick transaction processes and a user-friendly interface make
-                it easy for you to complete various payments.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>
-                  24/7 Customer Service:
-                </span>
-                Our support team is ready to assist you whenever you need it.
-              </ListItemText>
-            </ListItem>
-          </List>
-        </Box>
-        <Box
-          width={"30%"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <img
-            src={
-              "https://res.cloudinary.com/dktwq4f3f/image/upload/v1716342319/chooseus_fac0xl.png"
-            }
-            width={400}
-          />
-        </Box>
-      </Box>
-      <Box
-        display={"flex"}
-        justifyContent={"space-around"}
-        width={"80%"}
-        alignItems={"center"}
-        p={5}
-        height={"100vh"}
-      >
-        <Box
-          display={"flex"}
-          width={"40%"}
-          height={"40%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Card sx={{ width: "100%", height: "100%" }}>
-            <CardCover>
-              <video autoPlay loop muted>
-                <source
-                  src="https://res.cloudinary.com/dktwq4f3f/video/upload/v1716439798/lv_0_20240523101204_lelo6d.mp4"
-                  type="video/mp4"
-                />
-              </video>
-            </CardCover>
-          </Card>
-        </Box>
 
-        <Box width={"50%"}>
-          <Typography fontWeight={"bold"} fontSize={"25px"}>
-            How it works ?
-          </Typography>
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Register or Log In:</span>
-                Create an account or log in to your existing account.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Select Service:</span>{" "}
-                Choose the type of transaction you want to perform, such as
-                money top-up, game top-up, or bill payment.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Process Payment:</span>
-                Follow the simple and quick payment steps.
-              </ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Circle fontSize="small" sx={{ color: "black" }} />
-              </ListItemIcon>
-              <ListItemText>
-                <span style={{ fontWeight: "bold" }}>Done :</span>Your
-                transaction will be processed immediately, and you will receive
-                a notification once it's completed.
-              </ListItemText>
-            </ListItem>
-          </List>
-        </Box>
-      </Box>
-      <Box
-        display={"flex"}
-        width={"100%"}
-        justifyContent={"center"}
-        height={"80vh"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        bgcolor={"#f5ffaa"}
-      >
-        <Box
-          display={"flex"}
-          width={"80%"}
-          textAlign={"center"}
-          p={4}
-          flexDirection={"column"}
-        >
-          <Typography fontWeight={"bold"} fontSize={"20px"}>
-            Don't wait any longer, join thousands of other users who have
-            experienced the convenience of digital transactions with paymentku.
-            Enjoy convenience, speed, and security all in one place.
-          </Typography>
-        </Box>
-        <Box
-          width={"30%"}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
-        >
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{ fontWeight: "bold" }}
-            onClick={() => navigate(route["dashboard"])}
+      <Box sx={{ py: 10, bgcolor: "#f8f9fa" }}>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            textAlign="center"
+            mb={2}
+            color="#1a237e"
           >
-            See our product
-          </Button>
-        </Box>
+            Our Banking Services
+          </Typography>
+          <Typography
+            textAlign="center"
+            color="text.secondary"
+            mb={6}
+            sx={{ maxWidth: 600, mx: "auto" }}
+          >
+            Comprehensive digital banking solutions tailored for your financial
+            needs
+          </Typography>
+          <Grid container spacing={4}>
+            {[
+              {
+                icon: <Money sx={{ fontSize: 50, color: "#1a237e" }} />,
+                title: "Fund Transfers",
+                desc: "Send money securely to other Paymentku users or external bank accounts with instant processing.",
+              },
+              {
+                icon: <CreditCard sx={{ fontSize: 50, color: "#1a237e" }} />,
+                title: "Digital Top-Up",
+                desc: "Top-up your digital wallet instantly for various e-wallets and financial services.",
+              },
+              {
+                icon: <History sx={{ fontSize: 50, color: "#1a237e" }} />,
+                title: "Transaction History",
+                desc: "Track all your transactions with detailed reports and real-time updates.",
+              },
+              {
+                icon: <Security sx={{ fontSize: 50, color: "#1a237e" }} />,
+                title: "Bank-Grade Security",
+                desc: "Your funds are protected with advanced encryption and multi-layer security.",
+              },
+            ].map((item, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card
+                  sx={{
+                    p: 4,
+                    height: "100%",
+                    textAlign: "center",
+                    borderRadius: 3,
+                    transition: "transform 0.3s",
+                    "&:hover": { transform: "translateY(-8px)" },
+                  }}
+                >
+                  <Box sx={{ mb: 2 }}>{item.icon}</Box>
+                  <Typography variant="h6" fontWeight="bold" mb={1}>
+                    {item.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {item.desc}
+                  </Typography>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      <Box sx={{ py: 10, background: "#1a237e" }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" fontWeight="bold" mb={3} color="white">
+                Why Choose Paymentku?
+              </Typography>
+              <List>
+                {[
+                  {
+                    icon: <Speed />,
+                    title: "Fast Transactions",
+                    desc: "Process transactions in seconds, not days",
+                  },
+                  {
+                    icon: <Security />,
+                    title: "Secure & Reliable",
+                    desc: "Bank-level security for all your transactions",
+                  },
+                  {
+                    icon: <Support />,
+                    title: "24/7 Support",
+                    desc: "Round-the-clock customer assistance",
+                  },
+                  {
+                    icon: <TrendingUp />,
+                    title: "Real-Time Updates",
+                    desc: "Track your transactions instantly",
+                  },
+                ].map((item, index) => (
+                  <ListItem key={index} sx={{ px: 0 }}>
+                    <ListItemIcon sx={{ minWidth: 50, color: "#ffd54f" }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Typography fontWeight="bold" color="white">
+                          {item.title}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography sx={{ color: "rgba(255,255,255,0.7)" }}>
+                          {item.desc}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Grid container spacing={2}>
+                {[
+                  { icon: <SwapHoriz />, label: "Quick Transfer" },
+                  { icon: <CreditCard />, label: "Easy Top-Up" },
+                  { icon: <History />, label: "Full History" },
+                  { icon: <Security />, label: "Safe & Secure" },
+                ].map((item, index) => (
+                  <Grid item xs={6} key={index}>
+                    <Card
+                      sx={{
+                        p: 3,
+                        textAlign: "center",
+                        bgcolor: "rgba(255,255,255,0.1)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Box sx={{ color: "#ffd54f", mb: 1 }}>{item.icon}</Box>
+                      <Typography color="white" fontWeight="bold">
+                        {item.label}
+                      </Typography>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      <Box sx={{ py: 10, bgcolor: "#f8f9fa" }}>
+        <Container maxWidth="md">
+          <Card sx={{ p: 5, textAlign: "center", borderRadius: 4 }}>
+            <Typography variant="h4" fontWeight="bold" mb={2} color="#1a237e">
+              Start Your Digital Banking Journey
+            </Typography>
+            <Typography color="text.secondary" mb={4}>
+              Join thousands of users who trust Paymentku for their daily
+              banking needs
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              <Button
+                variant="contained"
+                size="large"
+                sx={{ bgcolor: "#1a237e", px: 5, borderRadius: 2 }}
+                onClick={() => navigate(route["signup"])}
+              >
+                Create Account
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                sx={{
+                  borderColor: "#1a237e",
+                  color: "#1a237e",
+                  px: 5,
+                  borderRadius: 2,
+                }}
+                onClick={() => navigate(route["dashboard"])}
+              >
+                Explore Features
+              </Button>
+            </Box>
+          </Card>
+        </Container>
+      </Box>
+
+      <Box sx={{ py: 4, bgcolor: "#1a237e", textAlign: "center" }}>
+        <Typography color="white" fontWeight="bold" variant="h5" mb={1}>
+          Paymentku
+        </Typography>
+        <Typography sx={{ color: "rgba(255,255,255,0.7)" }}>
+          Your Trusted Digital Banking Partner
+        </Typography>
       </Box>
     </Box>
   );
 };
 
 export default Home;
+

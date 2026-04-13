@@ -7,7 +7,7 @@ import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { LocalAtmRounded } from "@mui/icons-material";
+import { AccountBalance, Dashboard, Person, Help, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Button, Link } from "@mui/material";
@@ -15,39 +15,31 @@ import { Link as RouterLink } from "react-router-dom";
 import { route } from "../constant/route";
 import { RootState } from "../app/store";
 
-const settings: Array<{ name: string; link: string }> = [
-  {
-    name: "Home",
-    link: route["home"],
-  },
+const settings: Array<{ name: string; link: string; icon: React.ReactNode }> = [
   {
     name: "Dashboard",
     link: route["dashboard"],
+    icon: <Dashboard />,
   },
   {
     name: "Profile",
     link: route["user"],
+    icon: <Person />,
   },
   {
     name: "Help",
     link: route["help"],
+    icon: <Help />,
   },
 ];
 
 function Navbar() {
   const user = useSelector((state: RootState) => state.user);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
-
-  const element = document.getElementById("aboutUs");
-  const elementPosition = element
-    ? element.getBoundingClientRect().top + window.scrollY
-    : null;
 
   const navigate = useNavigate();
 
@@ -55,172 +47,131 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const handleHoverNav = (e: any) => {
-    e.target.style.backgroundColor = "green";
-  };
-
-  const handleHoverOutNav = (e: any) => {
-    e.target.style.backgroundColor = "transparent";
-  };
-
   return (
-    <AppBar position="sticky">
+    <AppBar 
+      position="sticky" 
+      sx={{ 
+        bgcolor: "#1a237e",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+      }}
+    >
       <Box
         maxWidth="xl"
         display={"flex"}
         justifyContent={"space-between"}
-        p={1}
+        p={1.5}
+        px={4}
       >
         <Box
           display={"flex"}
-          width="40%"
           alignItems={"center"}
-          ml={2}
           sx={{ cursor: "pointer" }}
           onClick={() => navigate("/")}
         >
-          <LocalAtmRounded
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-          />
+          <AccountBalance sx={{ mr: 1, fontSize: 28, color: "#ffd54f" }} />
           <Typography
             variant="h6"
             noWrap
-            fontStyle={"italic"}
+            fontWeight="bold"
             sx={{
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              color: "inherit",
-              textDecoration: "none",
+              display: "flex",
+              fontFamily: "sans-serif",
+              color: "white",
+              letterSpacing: "0.5px",
             }}
           >
             Paymentku
           </Typography>
         </Box>
         {user.user != "" ? (
-          <>
-            <Box
-              width={"30%"}
-              display={"flex"}
-              justifyContent={"flex-end"}
-              textAlign={"center"}
+          <Box display={"flex"} alignItems={"center"}>
+            <Tooltip title="Account settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar 
+                  alt="User profile image" 
+                  src={user.photo_profile}
+                  sx={{ 
+                    width: 40, 
+                    height: 40,
+                    border: "2px solid #ffd54f"
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
             >
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User profile image" src={user.photo_profile} />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {settings.map((setting) => (
-                  <RouterLink
-                    key={setting.name}
-                    style={{ textDecoration: "none", color: "black" }}
-                    to={setting.link}
-                  >
-                    <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center" width={"100%"}>
-                        {setting.name}
-                      </Typography>
-                    </MenuItem>
-                  </RouterLink>
-                ))}
-              </Menu>
-            </Box>
-          </>
+              {settings.map((setting) => (
+                <RouterLink
+                  key={setting.name}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                  to={setting.link}
+                >
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      {setting.icon}
+                      <Typography>{setting.name}</Typography>
+                    </Box>
+                  </MenuItem>
+                </RouterLink>
+              ))}
+              <MenuItem onClick={() => navigate("/")}>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Logout />
+                  <Typography>Logout</Typography>
+                </Box>
+              </MenuItem>
+            </Menu>
+          </Box>
         ) : (
-          <Box width="60%" display={"flex"} justifyContent={"space-between"}>
+          <Box display={"flex"} alignItems={"center"} gap={3}>
+            <Link
+              sx={{
+                textDecoration: "none",
+                cursor: "pointer",
+                color: "rgba(255,255,255,0.8)",
+                fontWeight: 500,
+                "&:hover": { color: "white" },
+              }}
+              onClick={() => navigate("/#features")}
+            >
+              Features
+            </Link>
             <Box display={"flex"} gap={2}>
-              <Link
-                sx={{
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  color: "white",
-                  transition: "background-color 0.1s ease-in-out",
-                  backgroundColor: "transparent",
-                }}
-                p={1}
-                borderRadius={"6px"}
-                fontSize={"18px"}
-                onClick={() =>
-                  window.scrollTo({
-                    top: elementPosition ? elementPosition : -1000,
-                    left: 0,
-                    behavior: "smooth",
-                  })
-                }
-                onMouseOver={handleHoverNav}
-                onMouseOut={handleHoverOutNav}
-              >
-                About us
-              </Link>
-              <Link
-                sx={{
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  color: "white",
-                  transition: "background-color 0.1s ease-in-out",
-                }}
-                p={1}
-                onMouseOut={handleHoverOutNav}
-                borderRadius={"6px"}
-                className="blog"
-                fontSize={"18px"}
-                onClick={() =>
-                  window.open("https://syafiqparadisam.netlify.app", "_blank")
-                }
-                onMouseOver={handleHoverNav}
-              >
-                Blog
-              </Link>
-              <Link
-                sx={{
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  color: "white",
-                  transition: "background-color 0.1s ease-in-out",
-                }}
-                p={1}
-                borderRadius={"6px"}
-                onMouseOut={handleHoverOutNav}
-                fontSize={"18px"}
-                className="testimoni"
-                onClick={() =>
-                  window.open("https://syafiqparadisam.netlify.app", "_blank")
-                }
-                onMouseOver={handleHoverNav}
-              >
-                Testimonial
-              </Link>
-            </Box>
-            <Box display={"flex"} gap={3} mr={5}>
               <Button
-                variant="contained"
-                color="success"
+                variant="outlined"
+                sx={{ 
+                  borderColor: "rgba(255,255,255,0.5)", 
+                  color: "white",
+                  "&:hover": { borderColor: "white", bgcolor: "rgba(255,255,255,0.1)" }
+                }}
                 onClick={() => navigate(route["signin"])}
               >
-                Login
+                Sign In
               </Button>
               <Button
-                variant="contained"
-                color="success"
+                sx={{ 
+                  bgcolor: "#ffd54f", 
+                  color: "#1a237e",
+                  fontWeight: "bold",
+                  "&:hover": { bgcolor: "#ffca28" }
+                }}
                 onClick={() => navigate(route["signup"])}
               >
-                Sign up
+                Get Started
               </Button>
             </Box>
           </Box>

@@ -2,9 +2,11 @@ import {
   Box,
   Button,
   Typography,
+  Card,
+  Tabs,
+  Tab,
   Dialog,
   DialogContent,
-  DialogContentText,
   DialogActions,
 } from "@mui/material";
 import {
@@ -17,195 +19,152 @@ import { HistoryTopUps } from "../types/response";
 import timeStampToLocaleString from "../utils/timeStampToClient";
 import { useNavigate } from "react-router-dom";
 import useAlert from "../hooks/useAlert";
-import TimeAgoComponent from "../component/TimeAgoComponent";
 import { route } from "../constant/route";
 import SkeletonList from "../component/SkeletonList";
-import Category from "../component/Category";
+import { useState } from "react";
+// @ts-ignore
+import toRupiah from "@develoka/angka-rupiah-js";
 
 const HistoryTopup = () => {
   const { open, handleClose, handleOpen } = useAlert();
   const { data, refetch, isSuccess } = useGetHistoryTopUpQuery();
-  const [deleteTopUp, { error: errDeleteAllHistory }] =
-    useDeleteHistoryTopUpMutation();
+  const [deleteTopUp] = useDeleteHistoryTopUpMutation();
   const navigate = useNavigate();
+  const [tab, setTab] = useState(0);
 
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
+      <Dialog open={open} onClose={handleClose}>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description" fontWeight={"bold"}>
-            Do you really want to delete all history ?
-          </DialogContentText>
+          <Typography fontWeight="bold">Delete All History?</Typography>
+          <Typography variant="body2" color="text.secondary" mt={1}>
+            This action cannot be undone. All your transaction history will be permanently deleted.
+          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              deleteTopUp();
-              handleClose();
-            }}
-            variant="contained"
-            color="success"
-            autoFocus
-          >
-            Ok
+          <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+          <Button variant="contained" color="error" onClick={() => { deleteTopUp(); handleClose(); }}>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
+
       <User>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          width={"100%"}
-          alignItems={"center"}
-        >
-          <Box
-            display={"flex"}
-            gap={1}
-            width={"100%"}
-            alignItems={"center"}
-            mt={2}
-            onClick={() => navigate(-1)}
-          >
-            <ArrowBack style={{ marginLeft: "10px", cursor: "pointer" }} />
+        <Box width={"100%"} maxWidth={800}>
+          <Box display="flex" alignItems="center" gap={2} mb={3} onClick={() => navigate(-1)} sx={{ cursor: "pointer" }}>
+            <ArrowBack sx={{ fontSize: 18, color: "#1a237e" }} />
+            <Typography color="#1a237e" fontWeight="bold">Back</Typography>
           </Box>
-          <Box>
-            <Typography fontWeight={"bold"} fontSize={"30px"}>
-              History Topup
+
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+            <Typography variant="h5" fontWeight="bold" color="#1a237e">
+              Transaction History
             </Typography>
-          </Box>
-          <Box width={"90%"} display={"flex"} justifyContent={"space-between"}>
-            <Category
-              firstItem={"Topup"}
-              menuItem={[
-                {
-                  categories: "Topup",
-                  redirect: "/dashboard/user/history/topup",
-                },
-                {
-                  categories: "Transfer",
-                  redirect: "/dashboard/user/history/transfer",
-                },
-              ]}
-            />
-            {errDeleteAllHistory && (
-              <Typography fontWeight={"bold"} color={"red"} fontSize={"20px"}>
-                {(errDeleteAllHistory as any).data?.message}
-              </Typography>
-            )}
-            <Box display={"flex"} gap={2} width={"30%"}>
-              <Button
-                color="success"
-                variant="contained"
+            <Box display="flex" gap={1}>
+              <Button 
+                size="small"
+                variant="outlined" 
                 startIcon={<Loop />}
                 onClick={refetch}
+                sx={{ borderColor: "#1a237e", color: "#1a237e" }}
               >
-                Reload
+                Refresh
               </Button>
-              <Button
+              <Button 
+                size="small"
+                variant="outlined" 
                 color="error"
-                variant="contained"
                 startIcon={<Delete />}
-                onClick={() => {
-                  handleOpen();
-                }}
+                onClick={handleOpen}
               >
                 Delete All
               </Button>
             </Box>
           </Box>
-          <Box
-            display={"flex"}
-            sx={{ scrollbarWidth: "none", "-ms-overflow-style": "none" }}
-            flexDirection={"column"}
-            width={"90%"}
-            maxHeight={"1000px"}
-            overflow={"scroll"}
-            my={3}
-            gap={1}
-          >
-            {isSuccess ? (
-              data?.data?.length == 0 ? (
-                <Box
-                  display={"flex"}
-                  width={"100%"}
-                  height={"50vh"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Box width={"50%"} textAlign={"center"}>
-                    <Typography fontWeight={"bold"} fontSize={"15px"}>
-                      You don't have history yet, Please consider to make topup,
-                      if you already make topup you can click reload button
-                    </Typography>
-                  </Box>
-                </Box>
-              ) : (
-                data?.data?.map((d: HistoryTopUps) => {
-                  return (
-                    <Box
-                      width={"100%"}
-                      onClick={() =>
-                        navigate(`${route["topuphistory"]}/${d.id}`)
+
+          <Card sx={{ borderRadius: 2, mb: 3 }}>
+            <Tabs 
+              value={tab} 
+              onChange={(_, v) => setTab(v)}
+              sx={{ 
+                borderBottom: 1, borderColor: "divider",
+                "& .MuiTab-root": { fontWeight: 600 }
+              }}
+            >
+              <Tab label="Top Up" />
+              <Tab label="Transfer" onClick={() => navigate(route["transferhistory"])} />
+            </Tabs>
+          </Card>
+
+          {isSuccess ? (
+            data?.data?.length === 0 ? (
+              <Card sx={{ p: 6, textAlign: "center", borderRadius: 2 }}>
+                <Typography variant="h6" color="text.secondary">
+                  No transaction history yet
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mt={1}>
+                  Your top-up and transfer history will appear here
+                </Typography>
+              </Card>
+            ) : (
+              <Box display="flex" flexDirection="column" gap={2}>
+                {data?.data?.map((d: HistoryTopUps) => (
+                  <Card 
+                    key={d.id}
+                    onClick={() => navigate(`${route["topuphistory"]}/${d.id}`)}
+                    sx={{ 
+                      p: 2, 
+                      borderRadius: 2,
+                      cursor: "pointer",
+                      transition: "transform 0.2s, box-shadow 0.2s",
+                      borderLeft: 4,
+                      borderLeftColor: d.status === "SUCCESS" ? "#4caf50" : "#f44336",
+                      "&:hover": { 
+                        transform: "translateX(4px)",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
                       }
-                      justifyContent={"space-around"}
-                      borderRadius={"10px"}
-                      alignItems={"center"}
-                      display={"flex"}
-                      bgcolor={
-                        d.isRead == true
-                          ? "#ddd"
-                          : d.status === "SUCCESS"
-                          ? "lightgreen"
-                          : "red"
-                      }
-                      p={3}
-                    >
-                      <Box
-                        width={"50%"}
-                        display={"flex"}
-                        flexDirection={"column"}
-                      >
-                        <Typography
-                          color={d.status === "SUCCESS" ? "green" : "white"}
-                          fontWeight={"bold"}
+                    }}
+                  >
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Box>
+                        <Typography variant="subtitle1" fontWeight="600" color="#1a237e">
+                          Top Up
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {timeStampToLocaleString(d.createdAt)}
+                        </Typography>
+                      </Box>
+                      <Box textAlign="right">
+                        <Typography 
+                          variant="h6" 
+                          fontWeight="bold" 
+                          color={d.status === "SUCCESS" ? "#4caf50" : "#f44336"}
+                        >
+                          +{toRupiah(d.amount, { dot: ",", floatingPoint: 0 })}
+                        </Typography>
+                        <Typography 
+                          variant="caption" 
+                          sx={{ 
+                            px: 1, 
+                            py: 0.5, 
+                            borderRadius: 1,
+                            bgcolor: d.status === "SUCCESS" ? "#e8f5e9" : "#ffebee",
+                            color: d.status === "SUCCESS" ? "#2e7d32" : "#c62828"
+                          }}
                         >
                           {d.status}
                         </Typography>
-                        <Typography color={"black"}>
-                          Amount: Rp.{d.amount}
-                        </Typography>
-                      </Box>
-                      <Box width={"50%"}>
-                        <Typography color={"black"}>
-                          Created at: {timeStampToLocaleString(d.createdAt)}
-                        </Typography>
-                        <TimeAgoComponent timestamp={d.createdAt} />
                       </Box>
                     </Box>
-                  );
-                })
-              )
-            ) : (
-              <Box
-                display={"flex"}
-                width={"100%"}
-                flexDirection={"column"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                pb={5}
-              >
-                <SkeletonList total={2} />
+                  </Card>
+                ))}
               </Box>
-            )}
-          </Box>
+            )
+          ) : (
+            <Box display="flex" flexDirection="column" alignItems="center" pb={5}>
+              <SkeletonList total={5} />
+            </Box>
+          )}
         </Box>
       </User>
     </>

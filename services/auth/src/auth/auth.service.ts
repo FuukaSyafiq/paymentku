@@ -29,6 +29,62 @@ export class AuthService {
     private cloudinaryService: CloudinaryService,
   ) {}
 
+  private async createTransporter() {
+    const smtpLogin = this.configService.get<string>('SMTP_LOGIN');
+    const smtpKey = this.configService.get<string>('SMTP_KEY');
+
+    return nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      from: smtpLogin,
+      secure: false,
+      dnsTimeout: 1000,
+      auth: {
+        user: smtpLogin,
+        pass: smtpKey,
+      },
+    });
+  }
+
+  async sendHelpEmail(message: string, userEmail?: string): Promise<response> {
+    try {
+      const transporter = await this.createTransporter();
+      const smtpLogin = this.configService.get<string>('SMTP_LOGIN');
+      const supportEmail = this.configService.get<string>('SUPPORT_EMAIL') || smtpLogin;
+
+      const emailOptions = {
+        from: smtpLogin,
+        to: supportEmail,
+        subject: `[Paymentku Support] Help Request${userEmail ? ` from ${userEmail}` : ''}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #1a237e;">New Help Request</h2>
+            ${userEmail ? `<p><strong>From:</strong> ${userEmail}</p>` : ''}
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+              <strong>Message:</strong>
+              <p>${message.replace(/\n/g, '<br>')}</p>
+            </div>
+            <p style="color: #666; font-size: 12px; margin-top: 20px;">
+              Sent from Paymentku Help Center
+            </p>
+          </div>
+        `,
+      };
+
+      await transporter.sendMail(emailOptions);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Help message sent successfully',
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Failed to send help message',
+      };
+    }
+  }
+
   async signInWithGoogle(
     payload: loginWithGoogle,
     cookies: any,

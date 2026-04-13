@@ -12,7 +12,8 @@ export const route = {
   user: "/dashboard/user",
   maintenance: "/maintenance",
   passwordReset: "/passwordReset*",
-  chartTransaction: "/dashboard/user/chart-transaction"
+  chartTransaction: "/dashboard/user/chart-transaction",
+  settings: "/dashboard/user/settings"
 };
 
 export const excludeRedirectRouteWhenUnauth = [

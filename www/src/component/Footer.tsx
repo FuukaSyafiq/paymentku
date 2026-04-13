@@ -1,110 +1,158 @@
-import { CopyrightOutlined, Email, EmailOutlined, GitHub, Instagram, LocalAtmRounded, YouTube } from "@mui/icons-material"
-import { Box, Button, Input, Link, Typography } from "@mui/material"
-import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
-import { route } from "../constant/route"
-
-type Email = {
-    email: string
-}
+import {
+  CopyrightOutlined,
+  EmailOutlined,
+  AccountBalance,
+  LinkedIn,
+  GitHub,
+} from "@mui/icons-material";
+import { Box, Link, Typography, Container, Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { route } from "../constant/route";
 
 const Footer = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<Email>()
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const submittedForm = (data: Email) => {
-        console.log(data)
-    }
-
-    return (
-        <>
-            <Box width={"100%"} bgcolor={"skyblue"} p={2} position={"relative"} zIndex={999}>
-                <Box width={"100%"} display={"flex"} justifyContent={"space-around"} alignItems={"center"} py={5}>
-
-                    <Box display={"flex"} justifyContent={"space-around"} width={"100%"}>
-                        <Box display={"flex"} flexDirection={"column"}>
-                            <Box display={"flex"} alignItems={"center"}>
-                                <Typography
-                                    variant="h6"
-                                    noWrap
-                                    fontSize={"23px"}
-                                    fontStyle={"italic"}
-                                    sx={{
-                                        display: { xs: 'none', md: 'flex' },
-                                        fontFamily: 'monospace',
-                                        fontWeight: 700,
-                                        color: 'inherit',
-                                        textDecoration: 'none',
-                                    }}
-                                >
-                                    Paymentku
-                                </Typography>
-                                <LocalAtmRounded sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }} />
-
-                            </Box>
-                            <Typography>Make your transaction safety and fast</Typography>
-                            <Typography fontWeight={"bold"} py={3}>Subscribe now</Typography>
-                            <form onSubmit={handleSubmit(submittedForm)}>
-                                {errors?.email && <Typography color={"red"}>{errors.email.message}</Typography>}
-                                <Input {...register("email", { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "Please enter correct email address" } })} placeholder={"Enter your email"}  />
-
-                                <Box width={"30%"} mt={3}>
-                                    <Button color="error" variant="contained" type="submit">Subscribe</Button>
-                                </Box>
-                            </form>
-                        </Box>
-                        <Box display={"flex"} flexDirection={"column"}>
-                            <Typography fontWeight={"bold"} fontSize={"18px"}>Information</Typography>
-                            <Link sx={{ textDecoration: "none", cursor: "pointer", color: "black" }} fontSize={"18px"} onClick={() => window.open("https://syafiqparadisam.netlify.app", "_blank")}>About us</Link>
-                            <Link sx={{ textDecoration: "none", cursor: "pointer", color: "black" }} fontSize={"18px"} onClick={() => window.open("https://syafiqparadisam.netlify.app", "_blank")}>Blog</Link>
-                            <Link sx={{ textDecoration: "none", cursor: "pointer", color: "black" }} fontSize={"18px"} onClick={() => window.open("https://syafiqparadisam.netlify.app", "_blank")}>Testimonial</Link>
-                        </Box>
-                        <Box display={"flex"} flexDirection={"column"}>
-                            <Typography fontWeight={"bold"} fontSize={"18px"}>Helpful links</Typography>
-                            <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["home"])}>Home</Typography>
-                            <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["dashboard"])}>Dashboard</Typography>
-                            <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["user"])}>Profile</Typography>
-                            <Typography sx={{ cursor: "pointer" }} fontSize={"18px"} onClick={() => navigate(route["topuphistory"])}>History</Typography>
-                        </Box>
-                        <Box display={"flex"} flexDirection={"column"}>
-                            <Typography fontWeight={"bold"} fontSize={"18px"}>Services</Typography>
-                            <Typography fontSize={"18px"}>Transfer</Typography>
-                            <Typography fontSize={"18px"}>Exchange</Typography>
-                            <Typography fontSize={"18px"}>Topup</Typography>
-                        </Box>
-                        <Box display={"flex"} flexDirection={"column"}>
-                            <Typography fontWeight={"bold"} fontSize={"18px"}>Contact us</Typography>
-                            <Box display={"flex"} alignItems={"center"}>
-                                <EmailOutlined color="error" />
-                                <Typography fontSize={"18px"} ml={1}>syafiqpinginfullstack@gmail.com</Typography>
-                            </Box>
-                            <Box mt={5} width={"100%"} display={"flex"} justifyContent={"center"}>
-                                <Box display={"flex"} alignItems={"center"} justifyContent={"space-around"} width="80%">
-
-                                    <Link href={"https://www.instagram.com/syafiqparadisam"} sx={{ textDecoration: "none", color: "black" }}>
-                                        <Instagram color="error" fontSize="large" />
-                                    </Link>
-                                    <Link href={"https://github.com/syafiqparadisam"} sx={{ textDecoration: "none", color: "black" }}>
-                                        <GitHub fontSize="large" />
-                                    </Link>
-                                    <Link href={"https://youtube.com/@SyafiqCoding?si=Z7zzxNwHn5bMeAQZ"} sx={{ textDecoration: "none", color: "red" }}>
-                                        <YouTube fontSize="large" />
-                                    </Link>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Box>
-                <Box width={"100%"}>
-                    <hr style={{ width: "100%", color: "black" }}></hr>
-                    <Box display={"flex"} justifyContent={"center"} alignItems={"center"} textAlign={"center"}>
-                        <CopyrightOutlined sx={{ marginInline: "5px" }} />
-                        <Typography>paymentku | All right reserved. 2024</Typography>
-                    </Box>
-                </Box>
+  return (
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: "#1a237e",
+        color: "white",
+        pt: 6,
+        pb: 3,
+      }}
+    >
+      <Container maxWidth="lg">
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={4}>
+            <Box display="flex" alignItems="center" mb={2}>
+              <AccountBalance sx={{ mr: 1, fontSize: 28, color: "#ffd54f" }} />
+              <Typography variant="h6" fontWeight="bold">
+                Paymentku
+              </Typography>
             </Box>
-        </>
-    )
-}
+            <Typography sx={{ color: "rgba(255,255,255,0.7)", mb: 2 }}>
+              Your Trusted Digital Banking Partner. Secure, fast, and reliable
+              financial services at your fingertips.
+            </Typography>
+            <Box display="flex" alignItems="center" gap={1}>
+              <EmailOutlined sx={{ color: "#ffd54f" }} />
+              <Typography variant="body2">support@paymentku.com</Typography>
+            </Box>
+          </Grid>
 
-export default Footer
+          <Grid item xs={6} md={2}>
+            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
+              Quick Links
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={1}>
+              <Link
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  cursor: "pointer",
+                  "&:hover": { color: "#ffd54f" },
+                }}
+                onClick={() => navigate("/")}
+              >
+                Home
+              </Link>
+              <Link
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  cursor: "pointer",
+                  "&:hover": { color: "#ffd54f" },
+                }}
+                onClick={() => navigate(route["signin"])}
+              >
+                Sign In
+              </Link>
+              <Link
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  cursor: "pointer",
+                  "&:hover": { color: "#ffd54f" },
+                }}
+                onClick={() => navigate(route["signup"])}
+              >
+                Register
+              </Link>
+            </Box>
+          </Grid>
+
+          <Grid item xs={6} md={2}>
+            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
+              Services
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={1}>
+              <Typography sx={{ color: "rgba(255,255,255,0.7)" }}>
+                Fund Transfer
+              </Typography>
+              <Typography sx={{ color: "rgba(255,255,255,0.7)" }}>
+                Digital Top-Up
+              </Typography>
+              <Typography sx={{ color: "rgba(255,255,255,0.7)" }}>
+                Transaction History
+              </Typography>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
+              Connect With Us
+            </Typography>
+            <Box display="flex" gap={2}>
+              <Link
+                href="https://linkedin.com/syafiq-paradisam"
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  "&:hover": { color: "#ffd54f" },
+                }}
+              >
+                <LinkedIn fontSize="large" />
+              </Link>
+              <Link
+                href="https://github.com/FuukaSyafiq"
+                sx={{
+                  color: "rgba(255,255,255,0.7)",
+                  "&:hover": { color: "#ffd54f" },
+                }}
+              >
+                <GitHub fontSize="large" />
+              </Link>
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{ color: "rgba(255,255,255,0.5)", mt: 3 }}
+            >
+              © 2024 Paymentku. All rights reserved.
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Box
+          mt={4}
+          pt={2}
+          borderTop="1px solid rgba(255,255,255,0.1)"
+          textAlign="center"
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            gap={0.5}
+          >
+            <CopyrightOutlined
+              sx={{ fontSize: 16, color: "rgba(255,255,255,0.5)" }}
+            />
+            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>
+              2024 Paymentku. All rights reserved.
+            </Typography>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
+  );
+};
+
+export default Footer;
+
